@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Haxxis Video Retrieval System</title>
+    <link rel="stylesheet" type="text/css" href="/VideoRetServer.css">
+</head>
+<body>
+    <!--<img src="images/VALogoFINAL_Icon-Only-TINY.png" alt="VA logo" style="width: 64px; height: 64px;">
+    <img src="images/CGCLogo.png" alt="CGC logo" style="width: 138px; height: 92px;">
+    <img src="images/Haxxis_Icon_128.png" alt="Haxxis logo" style="width:64px;height:64px;">-->
+    <h1>voidALPHA CGC Haxxis Video Retrieval System</h1>
+    <hr>
+<div id="SectionID_Job">
+    Job ID:  <input id="InputID_JobID" type="number" min="10001" max="99999" value="10001" style="width:60px">&nbsp;&nbsp;&nbsp;&nbsp;
+    <button onclick="ButtonHandler_PlayVideo()">PLAY VIDEO</button>&nbsp;&nbsp;&nbsp;&nbsp;
+    <button onclick="ButtonHandler_DownloadVideo()">DOWNLOAD VIDEO</button>&nbsp;&nbsp;&nbsp;&nbsp;
+    <button onclick="ButtonHandler_GetVideoStatus()">GET VIDEO STATUS</button>&nbsp;&nbsp;&nbsp;&nbsp;
+    <div style="display: inline" id="TextID_GetVideoResult"></div>
+    <p></p>
+    <hr>
+</div>
+<div id="SectionID_Batch">
+    Batch ID:  <input id="InputID_BatchID" type="number" min="101" max="999" value="101" style="width:50px">&nbsp;&nbsp;&nbsp;&nbsp;
+    <button onclick="ButtonHandler_GetBatchStatus()">GET BATCH STATUS</button>&nbsp;&nbsp;&nbsp;&nbsp;
+    <div style="display: inline" id="TextID_GetBatchResult"></div>
+    <p></p>
+    <hr>
+</div>
+<div id="SectionID_Round">
+    Round Number:  <input id="InputID_RoundNumber" type="number" min="0" max="999" value="0" style="width:40px">&nbsp;&nbsp;&nbsp;&nbsp;
+    <button onclick="ButtonHandler_GetRoundStatus()">GET ROUND STATUS</button>&nbsp;&nbsp;&nbsp;&nbsp;
+    <div style="display: inline" id="TextID_GetRoundResult"></div>
+    <p></p>
+</div>
+<table id="roundVideosTable" border="1" cellpadding="2">
+    <tr>
+        <td>&nbsp;</td>
+        <td> ID </td>
+        <td> Status </td>
+        <td> HP Name </td>
+        <!--<td> Parameters </td>-->
+        <td> Result </td>
+        <td> Video Name </td>
+        <td> Duration </td>
+        <td> </td> <!--- This is the column for the play/download buttons -->
+    </tr>
+</table>
+    <hr>
+<!--<div id="SectionID_Log">
+    <hr>
+    Server log level filter:
+    <input id="ID_LogLevelFilterSet" type="number" name="quantity" min="0" max="4" onclick="ButtonHandler_SetLogFilterLevel(this.value)"><br><br>
+    <div id="ID_LogTextArea" style="height: 96px; width: 800px; overflow: auto; scrollbar-base-color: gold; font-family: sans-serif; padding: 10px;"></div>
+</div>-->
+<!--<div id="SectionID_JobsTable">
+    <hr>
+    <div style="display: block; color: green; font-size: 200%;">JOBS:<br></div>
+    <button id="ButtonID_PageFirst" onclick="ButtonHandler_PageFirst()" style="width: 50px">First</button>&nbsp;&nbsp;
+    <button id="ButtonID_PageBack10" onclick="ButtonHandler_JumpPageRelative(-10)" style="width: 50px"><< 10</button>&nbsp;&nbsp;
+    <button id="ButtonID_PagePrev" onclick="ButtonHandler_PagePrev()" style="width: 50px">Prev</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="ButtonID_JumpPage0" onclick="ButtonHandler_JumpPageRelative(-3)" style="width: 30px"></button>&nbsp;&nbsp;
+    <button id="ButtonID_JumpPage1" onclick="ButtonHandler_JumpPageRelative(-2)" style="width: 30px"></button>&nbsp;&nbsp;
+    <button id="ButtonID_JumpPage2" onclick="ButtonHandler_JumpPageRelative(-1)" style="width: 30px"></button>&nbsp;&nbsp;
+    <div id="ButtonID_JumpPage3" style="width: 30px; display: inline"></div>&nbsp;&nbsp;
+    <button id="ButtonID_JumpPage4" onclick="ButtonHandler_JumpPageRelative(1)" style="width: 30px"></button>&nbsp;&nbsp;
+    <button id="ButtonID_JumpPage5" onclick="ButtonHandler_JumpPageRelative(2)" style="width: 30px"></button>&nbsp;&nbsp;
+    <button id="ButtonID_JumpPage6" onclick="ButtonHandler_JumpPageRelative(3)" style="width: 30px"></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="ButtonID_PageNext" onclick="ButtonHandler_PageNext()" style="width: 50px">Next</button>&nbsp;&nbsp;
+    <button id="ButtonID_PageForward10" onclick="ButtonHandler_JumpPageRelative(10)" style="width: 50px">10 >></button>&nbsp;&nbsp;
+    <button id="ButtonID_PageLast" onclick="ButtonHandler_PageLast()" style="width: 50px">Last</button>&nbsp;&nbsp;&nbsp;&nbsp;<div style="display: inline" id="pageHeaderID"></div>
+    <br><br>
+    Filter:&nbsp;&nbsp;
+    <button id="ButtonID_FilterAll" onclick="ButtonHandler_FilterAll()">ALL</button>&nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="ButtonID_Filter0" onclick="ButtonHandler_Filter(0)">Waiting</button>&nbsp;&nbsp;
+    <button id="ButtonID_Filter1" onclick="ButtonHandler_Filter(1)">Active</button>&nbsp;&nbsp;
+    <button id="ButtonID_Filter2" onclick="ButtonHandler_Filter(2)">Successful</button>&nbsp;&nbsp;
+    <button id="ButtonID_Filter3" onclick="ButtonHandler_Filter(3)">Failed</button>&nbsp;&nbsp;
+    <button id="ButtonID_Filter4" onclick="ButtonHandler_Filter(4)">Cancelled</button>&nbsp;&nbsp;
+    <button id="ButtonID_Filter5" onclick="ButtonHandler_Filter(5)">Killed</button>&nbsp;&nbsp;
+    <br><br>
+    <table id="jobsTable" border="1" cellpadding="2">
+        <tr>
+            <td>&nbsp;</td>
+            <!--NOTE: The following sort field keywords (the ids of the bbuttons below) must match variable names in the master server-->
+<!-- <td><b><input id="id" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> ID </b></td>
+<td><b><input id="status" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Status </b></td>
+<td><b><input id="progress" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Progress </b></td>
+<td><b><input id="worker" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Worker </b></td>
+<td><b><input id="gpuIndex" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> GPU </b></td>
+<td><b><input id="priority" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Priority </b></td>
+<td><b><input id="batchId" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Batch </b></td>
+<td><b><input id="HPName" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> HP Name </b></td>
+<td><b><input id="parameters" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Parameters </b></td>
+<td><b><input id="errorCode" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Result </b></td>
+<td><b><input id="videoName" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Video Name</b></td>
+<td><b><input id="completionTime" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Completed </b></td>
+<td><b><input id="duration" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Job Dur </b></td>
+
+    
+</tr>
+    </table>
+    <hr>
+    <input id="InputID_ItemsPerPage" type="number" min="1" max="100" style="width: 45px;">
+    <button onclick="ButtonHandler_SetItemsPerPage()">Set items per page</button>
+</div>-->
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+    "use strict";
+
+    var ftpPort = 8006;
+    var workerVGSPort = 8004;
+    var masterVGSPort = 8003;
+    var masterVGSHostname = "";
+
+    console.log("ip is " + location.host);
+
+    var socket = io.connect(location.host);
+
+    console.log("In HTML's socket handler");
+
+    var curPage = 0;
+
+    var logEntries = [];
+    var logFilterLevel = 4;
+
+    // This enum is also defined in VideoGenServer.js
+    var jobStatusEnum = {
+        WAITING: 0,
+        ACTIVE: 1,
+        COMPLETED_SUCCESS: 2,
+        COMPLETED_FAIL: 3,
+        CANCELLED: 4,
+        KILLED: 5
+    };
+
+    function UpdateLogDisplay() {
+        var logText = "";
+        for (var i = 0, len = logEntries.length; i < len; i++) {
+            if (logEntries[i].level <= logFilterLevel) {
+                logText += logEntries[i].msg + "<br>";
+            }
+        }
+        var scrollBox = document.getElementById("ID_LogTextArea");
+        scrollBox.innerHTML = logText;
+        scrollBox.scrollTop = scrollBox.scrollHeight;
+    }
+
+    function AddProgressBar(cell, percentage, additionalString, widthPx) {
+        cell.style.whiteSpace = "nowrap";
+        if (percentage < 0) {
+            cell.innerHTML = "n/a";
+        } else {
+            percentage = percentage.toFixed(1);
+            cell.innerHTML = "<progress max='100'><span>0</span>%</progress>&nbsp;" + (percentage < 100 ? "&nbsp;" : "") + (percentage < 10 ? "&nbsp;" : "") + percentage + "%";
+            cell.getElementsByTagName('progress')[0].value = percentage;
+            cell.getElementsByTagName('span')[0].innerHTML = percentage;
+            if (additionalString != null)
+                cell.innerHTML += additionalString;
+            if (widthPx == null)
+                widthPx = 80;
+            cell.style = "width: " + widthPx + "px";
+        }
+    }
+
+    socket.on('send vgs host name to client', function(data) {
+        masterVGSHostname = data['VGShostname'];
+        console.log("Received VGS host name (" + masterVGSHostname + ") from VRS server");
+    });
+
+    socket.on('log event', function (data) {
+        var levelIn = data['levelKey'];
+        var msgIn = data['msgKey'];
+        var logEntry = { level: levelIn, msg: msgIn };
+        logEntries.push(logEntry);
+        UpdateLogDisplay();
+    });
+
+    socket.on('clear log', function(data) {
+        logEntries = [];
+        UpdateLogDisplay();
+    });
+
+    function ButtonHandler_SetLogFilterLevel(newLevel) {
+        logFilterLevel = newLevel;
+        UpdateLogDisplay();
+    }
+
+    function ButtonHandler_DownloadVideo() {
+        GetVideoInfo(0);
+    }
+
+    function ButtonHandler_PlayVideo() {
+        GetVideoInfo(1);
+    }
+
+    function ButtonHandler_GetVideoStatus() {
+        GetVideoInfo(2);
+    }
+
+    function GetVideoInfo(userRequestType) {
+        var jobId = parseInt(document.getElementById("InputID_JobID").value);
+        document.getElementById("TextID_GetVideoResult").innerHTML = "";
+
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function () {
+            if (req.readyState === 4 && req.status === 200) {
+                var obj = JSON.parse(req.response);
+                OnVideoInfoReceived(obj, userRequestType, jobId);
+            }
+        }
+        var url = 'http://' + masterVGSHostname + ":" + masterVGSPort + "/VGS/VideoInfo/" + jobId;
+        req.open("GET", url, true);
+        req.send();
+    }
+
+    function OnVideoInfoReceived(data, userRequestType, jobId) {
+        var text = "";
+        var exists = data['exists'];
+        if (!exists) {
+            text += "There is no job with that ID.";
+        } else {
+            var ready = data['ready'];
+            var status = data['status'];
+            var progressPct = parseFloat(data['progressPct']);
+            var progressText = data['progressText'];
+
+            text += "Video " + (ready ? "" : "NOT") + " ready.  ";
+            text += "Status: " + InterpretStatusCode(status) + "; ";
+            text += "Progress: " + progressPct.toFixed(1) + "%" + progressText;
+
+            if (ready && (userRequestType === 0 || userRequestType === 1)) {
+                // Make the get video request!
+                var eventSessionId = data['eventSessionId'];
+                var workerIp = data['workerIp'];
+                var videoFilename = data['videoFilename'];
+                //text += "GETTING VIDEO...";
+
+                if (userRequestType === 0) {
+                    var ftpUrl = "ftp://" + workerIp + ":" + ftpPort + "/Public/GeneratedVideos/EventSession_" + eventSessionId + "/" + videoFilename;
+                    console.log('ftp url: ' + ftpUrl);
+
+                    window.open(ftpUrl);
+                } else {
+                    // Note:  jobId is not strictly necessary, but currently part of the interface
+                    var httpUrl = "http://" + workerIp + ":" + workerVGSPort + "/GetVideo/" + eventSessionId + "/" + jobId + "/" + videoFilename;
+                    console.log('http url: ' + httpUrl);
+
+                    // Note that you must not have pop-ups blocked in your browser
+                    window.open(httpUrl);
+                }
+            }
+        }
+        document.getElementById("TextID_GetVideoResult").innerHTML = text;
+    }
+
+    function InterpretStatusCode(status) {
+        switch (status) {
+            case 0: return "Waiting";
+            case 1: return "Active";
+            case 2: return "Completed successfully";
+            case 3: return "Failed";
+            case 4: return "Cancelled";
+            case 5: return "Killed";
+        }
+        return "unknown";
+    }
+        
+    function InterpretBatchStatusCode(status) {
+        switch (status) {
+            case 0: return "Waiting";
+            case 1: return "Active";
+            case 2: return "Completed successfully";
+            case 3: return "Failed";
+        }
+        return "unknown";
+    }
+
+    function ButtonHandler_GetBatchStatus() {
+        var batchId = parseInt(document.getElementById("InputID_BatchID").value);
+        document.getElementById("TextID_GetBatchResult").innerHTML = "";
+
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function () {
+            if (req.readyState === 4 && req.status === 200) {
+                var data = JSON.parse(req.response);
+                var text = "";
+                var exists = data['exists'];
+                if (!exists) {
+                    text += "There is no batch with that ID.";
+                } else {
+                    var ready = data['ready'];
+                    var status = data['status'];
+                    var progressPct = parseFloat(data['progressPct']);
+                    var progressText = data['progressText'];
+                    var numJobsTotal = parseInt(data['numJobsTotal']);
+                    var numJobsComplete = parseInt(data['numJobsComplete']);
+
+                    text += "Batch " + (ready ? "" : "NOT") + " ready.  ";
+                    text += "Status: " + InterpretBatchStatusCode(status) + "; ";
+                    text += numJobsComplete + " of " + numJobsTotal + " videos complete; ";
+                    text += "Progress: " + progressPct.toFixed(1) + "% " + progressText;
+                }
+                document.getElementById("TextID_GetBatchResult").innerHTML = text;
+            }
+        }
+        var url = 'http://' + masterVGSHostname + ":" + masterVGSPort + "/VGS/BatchInfo/" + batchId;
+        req.open("GET", url, true);
+        req.send();
+    }
+
+    function ButtonHandler_GetRoundStatus() {
+        var roundNumber = parseInt(document.getElementById("InputID_RoundNumber").value);
+        document.getElementById("TextID_GetRoundResult").innerHTML = "";
+
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function () {
+            if (req.readyState === 4 && req.status === 200) {
+                var data = JSON.parse(req.response);
+                var text = "";
+                var exists = data['exists'];
+                if (!exists) {
+                    text += "There are no automatic per-round videos for that round number.";
+                } else {
+                    var ready = data['ready'];
+                    var progressPct = parseFloat(data['progressPct']);
+                    var numJobsTotal = parseInt(data['numJobsTotal']);
+                    var numJobsComplete = parseInt(data['numJobsComplete']);
+
+                    text += "Automatic per-round videos for round " + roundNumber + " are " + (ready ? "" : "NOT") + " ready.  ";
+                    text += "Progress: " + numJobsComplete + " of " + numJobsTotal + " videos complete";
+                    text += " (" + progressPct.toFixed(1) + "%)";
+
+                    GenerateRoundJobTable(data);
+                }
+                document.getElementById("TextID_GetRoundResult").innerHTML = text;
+            }
+        }
+        var url = 'http://' + masterVGSHostname + ":" + masterVGSPort + "/VGS/RoundInfo/" + roundNumber;
+        req.open("GET", url, true);
+        req.send();
+    }
+
+    var EventSessionId;
+
+    function GenerateRoundJobTable(data) {
+        EventSessionId = data['eventSessionId'];
+
+        var table = document.getElementById("roundVideosTable");
+
+        while (table.rows.length > 1) { // Delete all rows except the header row
+            table.deleteRow(1);
+        }
+
+        var statuses = data['jobData'];
+
+        for (var i = 0, len = statuses.length; i < len; i++) {
+            var jobInfo = statuses[i];
+            var row = table.insertRow(table.rows.length);
+            var statusText = "";
+            var styleText = "color:black";
+            var done = true;
+            var cell = row.insertCell(0);
+            switch (jobInfo.status) {
+                case jobStatusEnum.WAITING:
+                    statusText = "Waiting";
+                    done = false;
+                    break;
+                case jobStatusEnum.ACTIVE:
+                    statusText = "ACTIVE";
+                    styleText = "color:green";
+                    done = false;
+                    break;
+                case jobStatusEnum.COMPLETED_SUCCESS:
+                    statusText = "Successful";
+                    break;
+                case jobStatusEnum.COMPLETED_FAIL:
+                    statusText = "Failed";
+                    styleText = "color:red";
+                    break;
+                case jobStatusEnum.CANCELLED:
+                    statusText = "Cancelled";
+                    styleText = "color:red";
+                    break;
+                case jobStatusEnum.KILLED:
+                    statusText = "Killed";
+                    styleText = "color:red";
+                    break;
+            }
+            cell.innerHTML = "";
+            row.insertCell(1).innerHTML = jobInfo.id;
+            var statusCell = row.insertCell(2);
+            statusCell.innerHTML = statusText;
+            statusCell.style = styleText;
+            row.insertCell(3).innerHTML = jobInfo.HPName;
+            //row.insertCell(9).innerHTML = jobInfo.parameters;
+            var resultCell = row.insertCell(4);
+            resultCell.innerHTML = done ? InterpretErrorCode(jobInfo.errorCode) : "";
+            resultCell.style = styleText;
+            row.insertCell(5).innerHTML = jobInfo.videoFilename;
+
+            var vidDurCell = row.insertCell(6);
+            var vidDurVal = parseFloat(jobInfo.videoDuration).toFixed(1);
+            vidDurCell.innerHTML = vidDurVal <= 0 ? "" : vidDurVal + "s";    // Video duration in seconds
+            vidDurCell.style = "text-align:right";
+
+            var playCell = row.insertCell(7);
+            playCell.innerHTML = '<b><input type="button" value="PLAY" onclick="ButtonHandler_Play(this,\'' + jobInfo.workerIp + '\');" style="height: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center">&nbsp;&nbsp;' +
+                '<input type="button" value="DOWNLOAD" onclick="ButtonHandler_Download(this,\'' + jobInfo.workerIp + '\');" style="height: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"></b>';
+            var disabled = (jobInfo.status !== jobStatusEnum.COMPLETED_SUCCESS);
+            var button = playCell.getElementsByTagName('input')[0];
+            button.disabled = disabled;
+            button = playCell.getElementsByTagName('input')[1];
+            button.disabled = disabled;
+        }
+    }
+
+    function ButtonHandler_Play(button, workerIp) {
+        var row = button.parentNode.parentNode.parentNode;
+        var jobId = row.cells[1].innerHTML;
+        var videoFilename = row.cells[5].innerHTML;
+
+        var httpUrl = "http://" + workerIp + ":" + workerVGSPort + "/GetVideo/" + EventSessionId + "/" + jobId + "/" + videoFilename;
+
+        // Note that you must not have pop-ups blocked in your browser
+        window.open(httpUrl);
+    }
+
+    function ButtonHandler_Download(button, workerIp) {
+        var row = button.parentNode.parentNode.parentNode;
+        var videoFilename = row.cells[5].innerHTML;
+
+        var ftpUrl = "ftp://" + workerIp + ":" + ftpPort + "/Public/GeneratedVideos/EventSession_" + EventSessionId + "/" + videoFilename;
+        console.log('ftp url: ' + ftpUrl);
+
+        window.open(ftpUrl);
+    }
+
+    function ButtonHandler_PageFirst() {
+        socket.emit('first page');
+    }
+
+    function ButtonHandler_PageLast() {
+        socket.emit('last page');
+    }
+
+    function ButtonHandler_PageNext() {
+        socket.emit('next page');
+    }
+
+    function ButtonHandler_PagePrev() {
+        socket.emit('prev page');
+    }
+
+    function ButtonHandler_JumpPageRelative(pageDelta) {
+        var page = curPage + pageDelta;
+        socket.emit('jump to page', { pageKey: page });
+    }
+
+    function ButtonHandler_FilterAll() {
+        socket.emit('reset filter');
+    }
+
+    function ButtonHandler_Filter(whichFilter) {
+        socket.emit('toggle filter', { whichFilterKey: whichFilter });
+    }
+
+    function ButtonHandler_Sort(sortField) {
+        socket.emit('sort column', { sortFieldKey: sortField });
+    }
+
+    function ButtonHandler_SetItemsPerPage() {
+        var value = parseInt(document.getElementById('InputID_ItemsPerPage').value);
+        if (value > 0 && value < 101)
+            socket.emit('set items per page', { newItemsPerPage: value });
+    }
+
+    function InterpretErrorCode(errorCode) {
+        switch (errorCode) {
+            case  -2: return "Cancelled";
+            case  -1: return "Killed";
+            case   0: return "OK";
+            case   1: return "Cannot change directory to CGC_LOCAL_BUILD_ROOT";
+            case   2: return "Error returned from Haxxis";
+            case   3: return "Exceptions during Haxxis run";
+            case   4: return "HP not found";
+            case   5: return "HP has no choreography";
+            case   6: return "Choreography did not record any video";
+            case   7: return "HP evaluation had errors";
+            case   8: return "HP has chain errors";
+            case   9: return "Manifest not found";
+            case  10: return "Specified manifest is not a text file";
+            case  11: return "Trace exceeds instruction limit";
+            case  12: return "Trace API request timed out";
+            case  13: return "Trace API request had error";
+            case  99: return "Invalid parameter count given to bash script";
+            case 127: return "OK";    // This is returned when Haxxis intentionally kills self after video gen (2016/03/01)
+            case 139: return "Crash in Haxxis";
+            case 143: return "Job timed out";
+            default: return "Unknown error code";
+        }
+    }
+
+    function handleJobCancelButton(button) {
+        var row = button.parentNode.parentNode;
+        var jobId = row.cells[1].innerHTML;
+        socket.emit('cancel waiting job', { jobIdToCancel: jobId });
+    }
+
+    function handleJobKillButton(button) {
+        var row = button.parentNode.parentNode;
+        var jobId = row.cells[1].innerHTML;
+        socket.emit('kill active job', { jobIdToKill: jobId });
+    }
+
+    function handleJobDeleteButton(button) {
+        var row = button.parentNode.parentNode;
+        var jobId = row.cells[1].innerHTML;
+        socket.emit('delete job', { jobIdToDelete: jobId });
+    }
+
+</script>
+
+</body>
+</html>

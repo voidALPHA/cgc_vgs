@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Haxxis Video Generation WORKER Server</title>
+    <link rel="stylesheet" type="text/css" href="/VideoGenServer.css">
+</head>
+<body>
+    <h1>voidALPHA CGC Haxxis Video Generation WORKER Server</h1>
+<hr>
+<hr>
+Status: <b id="DisplayID_Status"></b>HAPPY<br>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+    console.log("ip is " + location.host);
+
+    var socket = io.connect(location.host);
+
+    console.log("In worker HTML's socket handler");
+</script>
+
+</body>
+</html>

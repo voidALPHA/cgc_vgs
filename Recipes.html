@@ -1,0 +1,184 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+
+    <script src="tmpl.min.js"></script>
+
+    <title>Haxxis Packages</title>
+
+</head>
+
+<body>
+<a name="top"></a>
+<div id="nav-header"></div>
+
+<div id="content"></div>
+
+<div id="image-overlay" onclick="hideImage();">
+	<div id="image-overlay-background" onclick="hideImage();"></div>
+    <img id="image-overlay-image" onclick="hideImage();" src="images/filament_view.png" />
+    <div id="image-overlay-caption" onclick="hideImage();">caption</div>
+    <div id="image-close-button" onclick="hideImage();">X</div>
+</div>
+
+
+</body>
+
+
+<script type="text/x-tmpl" id="nav-header-template">
+    {% for (var i=0; i<o.packages.length; i++) {
+        var package = o.packages[i];
+        
+        if ( package.hiddenFromHeader ) {
+            continue;
+        }
+    %}
+        <a class="nav-link" href="#{%=package.anchorName%}">
+        <div class="nav-button" style="background-image:url('{%= package.images[0].filename %}')">
+            <div class="title-area">
+                <span>{%=o.packages[i].name%}</span>
+            </div>
+        </div>
+        </a>
+    {% } %}
+</script>
+
+
+<script type="text/x-tmpl" id="content-template">
+    {% for (var i=0; i<o.packages.length; i++) {
+    		var package = o.packages[i];
+     %}
+    
+        <a name="{%=package.anchorName%}"></a>
+        <section class="package">
+            <a href="#top" class="top-link">TOP</a>
+            <h2>{%=package.name%}</h2>
+
+            {% if (package.hpname) { %}
+                <h4 style="display:inline; padding-right:15px">Haxxis Package Name:</h4>{%=package.hpname%}
+            {% } %}
+            
+            {% if (package.pageUnderConstruction) { %}
+            	<span class="under-construction">This section is unfinished.</span>
+            {% } %}
+
+
+            <p class="summary">{%#package.summary%}
+            {% if (package.notes) { %}
+                <ul class="notes">
+                    {% for (var j=0; j<package.notes.length; j++) { %}
+                        <li>{%#package.notes[j]%}</li>
+                    {% } %}
+                </ul>
+            {% } %}
+            <br>
+            <div class="left-column">
+            	{% for ( var j = 0; j < package.images.length; j++ ) {
+            		var image = package.images[j];
+            	%}
+                	<img class="screenshot" src="{%=image.filename%}" onclick="showImage('{%=image.filename%}', '{%=image.caption%}');" />
+                	{% if (image.caption) { %}
+                		<span class="screenshot-caption">{%#image.caption%}</p></span>    <!-- Leave the /p. It closes p's within the template data; though they shouldn't need to be closed... -->
+                	{% } %}
+            	{% } %}
+            </div>
+            <div class="right-column">
+                {% if (package.arguments.required) { %}
+                    <h3>Required Arguments</h3>
+                    {% include('args-template', package.arguments.required); %}
+                {% } %}
+                {% if (package.arguments.optional) { %}
+                    <h3>Optional Arguments</h3>
+                        {% include('args-template', package.arguments.optional); %}
+                {% } %}
+            </div>
+        </section>
+    {% } %}
+</script>
+
+
+<script type="text/x-tmpl" id="args-template">
+    {% for (var i=0; i<o.length; i++) {
+        var arg = o[i];
+
+        if ( arg.hidden ) {
+            continue;
+        }
+     %}
+        <span class="argument-name">{%=arg.name%}</span>
+        {% if (arg.default || arg.examples) { %}
+        =
+        {% } %}
+        {% if (arg.default) { %}
+            <span class="argument-example-default">{%=arg.default%}</span>
+        {% } %}
+        {% if (arg.examples) { 
+            for ( var j = 0; j < arg.examples.length; j++ ) {
+        %}
+                <span class="argument-example">{%=arg.examples[j]%}</span>
+        {% } } %}
+        <br>
+        <span class="argument-description">{%#arg.description%}</p></span>  <!-- Keep the /p -- template oddity! -->
+        <br><br>
+    {% } %}
+    <br>
+</script>
+
+
+<script src="data.js"></script>
+
+<script>
+
+    // Data manipulation and templating
+
+
+    data.packages.forEach( function( package, packageIndex, packageArray ) {
+        // Ditch spaces in package names to use as anchor names
+        if ( !package.anchorName ) {
+            package.anchorName = package.name.replace(/\s+/g, '');
+        }
+
+        // Convert simple image names into image descriptor objects
+        package.images.forEach( function( image, imageIndex, imageArray ) {
+        	if ( typeof(image) === 'string' ) {
+        		imageArray[imageIndex] = {
+        			filename: image,
+        			caption: ""
+        		};
+        	}
+        });
+    });
+
+    document.getElementById("content").innerHTML = tmpl("content-template", data);
+    document.getElementById("nav-header").innerHTML = tmpl("nav-header-template", data);
+
+
+
+    // Image zooming
+
+
+    var showImage = function( imageSrc, caption ) {
+        document.getElementById('image-overlay-image').src = imageSrc;
+        document.getElementById('image-overlay-caption').innerHTML = caption;
+        document.getElementById('image-overlay-caption').style.display = (caption ? "block" : "none");
+        document.getElementById('image-overlay').style.display="block";
+        document.body.style.overflow='hidden';
+    };
+
+    var hideImage = function() {
+        document.getElementById('image-overlay').style.display="none";
+        document.body.style.overflow='initial';
+    };
+
+    hideImage();
+
+    document.onkeydown = function (e) {
+        if (e.keyCode == '27') {
+            // escape
+            hideImage();
+        }
+    };
+
+</script>
+
+</html>

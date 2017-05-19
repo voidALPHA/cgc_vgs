@@ -1,0 +1,281 @@
+Initialize engine version: 5.5.0f3 (38b4efef76f0)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: NVIDIA GeForce GTX 780 (ID=0x1004)
+    Vendor:   NVIDIA
+    VRAM:     3039 MB
+    Driver:   22.21.13.8194
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\Assembly-CSharp-firstpass.dll (this message is harmless)
+Loading C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\Assembly-CSharp-firstpass.dll into Unity Child Domain
+Platform assembly: C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll (this message is harmless)
+Loading C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll into Unity Child Domain
+Platform assembly: C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\SampleClassLibrary.dll (this message is harmless)
+Loading C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\SampleClassLibrary.dll into Unity Child Domain
+Platform assembly: C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\System.Deployment.dll (this message is harmless)
+Loading C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\System.Deployment.dll into Unity Child Domain
+Platform assembly: C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\System.Windows.Forms.dll (this message is harmless)
+Loading C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\System.Windows.Forms.dll into Unity Child Domain
+- Completed reload, in  0.032 seconds
+Platform assembly: C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\System.dll (this message is harmless)
+Platform assembly: C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\System.Runtime.Serialization.dll (this message is harmless)
+Platform assembly: C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\System.Xml.Linq.dll (this message is harmless)
+Platform assembly: C:\Users\Chris\Documents\LocalHaxxisBuild\Haxxis\2017.05.17_14.01.04\Haxxis_Data\Managed\System.Xml.dll (this message is harmless)
+<RI> Initializing input.
+<RI> Input initialized.
+desktop: 1920x1080 60Hz; virtual: 5760x1080 at -1920,0
+<RI> Initialized touch support.
+The referenced script on this Behaviour (Game Object 'POV_return_shape') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'POV_return_shape1b') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'POV_return_shape3b') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'POV_return_shape4b') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'POV_return_shape_5') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'POV_return_shape_6') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'POV_return_shape_7') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'Graph_Cube') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'big_cube') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectile') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectileB') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectileC') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectileD') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectileE') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectileF') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectileF_T1') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectileF_T2') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectileF_T3') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectileF_T4') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectileF_T6') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectileF_T7') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectileG_T3') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectileG_T4') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectileG_T5') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectile_G_POV_T3') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectile_G_POV_T4') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectile_G_POV_T5') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectile_POV_T2') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectile_POV_T3') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectile_POV_T4') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectile_POV_T6') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'projectile_POV_T7') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'mesh_firewall_dome') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'mesh_firewall_domeB') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'mesh_service_projectile') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'pin_patching') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'pin_service_off') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'pin_sphere_A') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'pin_sphere_B') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'pin_sphere_C') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'mesh_damaged') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'Sound Test') is missing!
+ 
+(Filename:  Line: 1754)
+
+UnloadTime: 0.934473 ms
+ChainView model has 0 chains, 0 nodes and 1 groups. Router-based node count is 0.
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Setting up 2 worker threads for Enlighten.
+  Thread -> id: 2c40 -> priority: 1 
+  Thread -> id: 3368 -> priority: 1 
+Haxxis Startup Test Script
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Command line arguments:
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+0 command line arguments total
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Standalone build version: 2017.05.17_14.01.04
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Resolution: 1920x1027; Windowed
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+TypePicker found 308 concrete types that inherit from Chains.ChainNode
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unexpected package root path.
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Root path is C:/Users/Chris/Documents/GitRepos/videogenserver/Haxxis/HaxxisPackages/Packages
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+fullPackagePath isC:/Users/Chris/Desktop/test.json
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unexpected package root path.
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Root path is C:/Users/Chris/Documents/GitRepos/videogenserver/Haxxis/HaxxisPackages/Packages
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+fullPackagePath isC:/Users/Chris/Desktop/test.json
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Save took 00:00:00.0959766 seconds
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unexpected package root path.
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Root path is C:/Users/Chris/Documents/GitRepos/videogenserver/Haxxis/HaxxisPackages/Packages
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+fullPackagePath isC:/Users/Chris/Desktop/test.json
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+

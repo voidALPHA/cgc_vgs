@@ -1,0 +1,24 @@
+{
+  "name": "videogenserver",
+  "version": "1.0.0",
+  "description": "Video Generation Server",
+  "main": "VideoGenServer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.4",
+    "ftp": "^0.3.10",
+    "ftpd": "^0.2.15",
+    "ip": "^1.1.3",
+    "jsonfile": "^2.2.3",
+    "log-timestamp": "^0.1.2",
+    "nodemailer": "^1.11.0",
+    "request": "^2.74.0",
+    "serve-favicon": "^2.3.0",
+    "socket.io": "^1.4.5",
+    "socket.io-client": "^1.4.5"
+  }
+}

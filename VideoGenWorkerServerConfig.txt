@@ -1,0 +1,18 @@
+# IP Address / Hostname of the Master Server
+MasterIP: localhost
+
+# IP Address / Hostname to register to the Master Server as; if left out, will fetch address on launch
+# LocalIP: localhost
+
+# Friendly Name of this Server
+Name: Local Host
+
+# Number of "regular" jobs this worker take on at a time at first
+RegularSlots: 1
+
+# Number of "special" jobs this worker take on at a time at first
+SpecialSlots: 1
+
+# Windows drive letters this worker monitors
+Drive1: C
+Drive2: D

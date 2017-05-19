@@ -1,0 +1,9 @@
+# Video Retrieval Server Configuration
+#
+# This file is parsed for keywords in the form 'keyword:data', as in 'itemsPerPage:10'
+# Everything else is ignored, and we generally add comments with a line that starts with # character
+
+#VGSMasterHostName:Paul-PC
+VGSMasterHostName:Build-PC
+
+itemsPerPage:20

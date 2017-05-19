@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Haxxis Video Generation System</title>
+    <link rel="stylesheet" type="text/css" href="/VideoGenServer.css">
+</head>
+<body>
+    <!--<img src="images/VALogoFINAL_Icon-Only-TINY.png" alt="VA logo" style="width: 64px; height: 64px;">
+    <img src="images/CGCLogo.png" alt="CGC logo" style="width: 138px; height: 92px;">
+    <img src="images/Haxxis_Icon_128.png" alt="Haxxis logo" style="width:64px;height:64px;">-->
+    <h1>voidALPHA CGC Haxxis Video Generation System</h1>
+<hr>
+    <div style="display: none" id="TextID_MasterShutDown"><br><br>MASTER SERVER HAS BEEN SHUT DOWN<br><br><br></div>
+    Toggle sections:&nbsp;&nbsp;
+    <button id="ButtonID_ToggleWorkerTable" onclick="sectionWorkerTable = !sectionWorkerTable; SetSectionState(this.id, sectionWorkerTable, 'SectionID_WorkerTable', levelWorkerTable);">Worker Table</button>&nbsp;&nbsp;&nbsp;
+    <button id="ButtonID_ToggleWorkerTableSpecial" onclick="sectionWorkerTableSpecial = !sectionWorkerTableSpecial; SetSectionState(this.id, sectionWorkerTableSpecial, 'SectionID_WorkerTableSpecial', levelWorkerTableSpecial);">Worker Special</button>&nbsp;&nbsp;&nbsp;
+    <button id="ButtonID_ToggleSingleLaunch" onclick="sectionSingleLaunch = !sectionSingleLaunch; SetSectionState(this.id, sectionSingleLaunch, 'SectionID_SingleLaunch', levelSingleLaunch);">Single Launch</button>&nbsp;&nbsp;
+    <button id="ButtonID_ToggleBatchLaunch" onclick="sectionBatchLaunch = !sectionBatchLaunch; SetSectionState(this.id, sectionBatchLaunch, 'SectionID_BatchLaunch', levelBatchLaunch);">Batch Launch</button>&nbsp;&nbsp;
+    <button id="ButtonID_ToggleLog" onclick="sectionLog = !sectionLog; SetSectionState(this.id, sectionLog, 'SectionID_Log', levelLog);">Server Log</button>&nbsp;&nbsp;
+    <button id="ButtonID_ToggleSpecial" onclick="sectionSpecial = !sectionSpecial; SetSectionState(this.id, sectionSpecial, 'SectionID_Special', levelSpecial);">Special</button>&nbsp;&nbsp;
+    <button id="ButtonID_ToggleGlobalSettings" onclick="sectionGlobalSettings = !sectionGlobalSettings; SetSectionState(this.id, sectionGlobalSettings, 'SectionID_GlobalSettings', levelGlobalSettings);">Global Settings</button>&nbsp;&nbsp;
+    <button id="ButtonID_ToggleArchive" onclick="sectionArchive = !sectionArchive; SetSectionState(this.id, sectionArchive, 'SectionID_Archive', levelArchive);">Archive</button>&nbsp;&nbsp;
+    <button id="ButtonID_ToggleBatchTable" onclick="sectionBatchTable = !sectionBatchTable; SetSectionState(this.id, sectionBatchTable, 'SectionID_BatchTable', levelBatchTable);">Batch Table</button>&nbsp;&nbsp;
+    <button id="ButtonID_ToggleJobsTable" onclick="sectionJobsTable = !sectionJobsTable; SetSectionState(this.id, sectionJobsTable, 'SectionID_JobsTable', levelJobsTable);">Job Table</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="InputID_AdminPassword" type="password" size="1">&nbsp;
+    <button onclick="ButtonHandler_AdminLogin()">Admin</button>&nbsp;&nbsp;&nbsp;&nbsp;
+    <div style="display: inline" id="TextID_Admin1"></div>&nbsp;&nbsp;&nbsp;&nbsp;
+    <div style="display: inline" id="TextID_Admin2"></div>&nbsp;&nbsp;&nbsp;&nbsp;
+<div id="SectionID_WorkerTable">
+    <hr>
+    <table id="workersTable" border="1" cellpadding="2">
+        <tr bgcolor="lightblue">
+            <td><b>Worker</b></td>
+            <td><b>IP</b></td>
+            <td><b>Name</b></td>
+            <td><b>Status</b></td>
+            <td><b>Active jobs</b></td>
+            <td><b>(Reg)</b></td>
+            <td><b>(Spec)</b></td>
+            <td><b>Max reg jobs</b></td>
+            <td><b>Max spec jobs</b></td>
+            <td><b>Job slots</b></td>
+            <td><b>CPU load</b></td>
+            <td><b>Mem load</b></td>
+            <td><b>GPU load</b></td>
+            <td><b>GPU temps C</b></td>
+            <td><b>GPUs</b></td>
+            <td><b>Disk1 space</b></td>
+            <td><b>Disk2 space</b></td>
+        </tr>
+    </table>
+
+    Status: <b id="DisplayID_Status"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+    Number of jobs to complete: <b id="DisplayID_TotalUnfinishedJobs"></b>&nbsp;&nbsp;
+    (<b id="DisplayID_NumActiveJobs"></b> active;&nbsp;
+    <b id="DisplayID_NumRequestedJobs"></b> waiting)&nbsp;&nbsp;&nbsp;&nbsp;
+    (maximum waiting jobs: <b id="DisplayID_MaxRequestedJobs"></b>)<br>
+    Number of jobs completed successfully: <b id="DisplayID_NumSuccessfulJobs"></b>&nbsp;&nbsp;
+    Number of jobs failed: <b id="DisplayID_NumFailedJobs"></b>&nbsp;&nbsp;
+    Number of jobs cancelled: <b id="DisplayID_NumCancelledJobs"></b>&nbsp;&nbsp;
+    Number of jobs killed: <b id="DisplayID_NumKilledJobs"></b><br>
+</div>
+<div id="SectionID_WorkerTableSpecial">
+    <hr>
+    <table id="workersTableSpecial" border="1" cellpadding="2">
+        <tr>
+            <td><b>Worker</b></td>
+            <td><b>Pausing</b></td>
+            <td><b>Kill</b></td>
+            <td><b>Restart</b></td>
+            <td><b>Shut down</b></td>
+        </tr>
+    </table>
+</div>
+<div id="SectionID_SingleLaunch">
+    <hr>
+    Haxxis Package Name:
+    <input id="InputID_HPName" type="text" size="50">&nbsp;&nbsp;&nbsp;&nbsp;
+    <button onclick="ButtonHandler_ListPackages()">List Haxxis Packages</button>&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;Optional Video Filename Format String:
+    <input id="InputID_VideoFilenameFormatString" type="text" size="50">
+    <br>
+    Parameters:
+    <input id="InputID_Parameters" type="text" size="200"><br>
+    Use round as round label:
+    <input type="radio" name="useRoundAsRoundLabel" value="on" id="ID_UseRoundAsRoundLabel">Yes
+    <input type="radio" name="useRoundAsRoundLabel" value="off" checked>No&nbsp;&nbsp;&nbsp;&nbsp;
+    Top Label:
+    <input id="InputID_TopLabel" type="text" size="12">&nbsp;&nbsp;&nbsp;&nbsp;
+    Bottom Label:
+    <input id="InputID_BottomLabel" type="text" size="12">&nbsp;&nbsp;&nbsp;&nbsp;
+    Bottom-Right Label:
+    <input id="InputID_BottomRightLabel" type="text" size="12">&nbsp;&nbsp;&nbsp;&nbsp;
+    <br>
+    Priority:
+    <input id="InputID_PrioritySingle" type="number" min="1" max="100" value="75">&nbsp;&nbsp;&nbsp;&nbsp;
+    Track this job when launched:
+    <input type="radio" name="autotrack" value="on" id="ID_AutoTrackOn" checked>Yes
+    <input type="radio" name="autotrack" value="off">No&nbsp;&nbsp;&nbsp;&nbsp;
+    <button onclick="ButtonHandler_GetPackageParameters()">Show Package Parameters</button>&nbsp;&nbsp;&nbsp;&nbsp;
+    <button onclick="ButtonHandler_CopyPackageParameters()">Copy Default Package Parameters</button>&nbsp;&nbsp;&nbsp;&nbsp;
+    <button onclick="ButtonHandler_StartVideoGen()" style="background-color:pink">Start SINGLE Video Generation</button>
+    <br>
+    <br>
+    <b id="DisplayID_HPParams"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+    <br>
+    <br>
+    <div id="ID_HPListArea" style="height:96px;width:400px;overflow:auto;scrollbar-base-color:gold;font-family:sans-serif;padding:10px;"></div>
+    <br>
+    <br>
+    <div id="ID_HPUploadArea">
+        <label for="InputID_HPUpload">Upload special Haxxis Package:</label> <input id="InputID_HPUpload" type="file" accept=".json" onchange="if(this.files.length > 0) socket.emit('upload special', { name: this.files[0].name, file: this.files[0] })"><br><br>
+        <button style="background-color:pink" onclick="socket.emit('purge special')">Purge worker special packages</button>
+    </div>
+</div>
+    <p></p>
+<div id="SectionID_BatchLaunch">
+    <hr>
+    Batch Manifest Name:
+    <input id="InputID_ManifestName" type="text" size="50">
+    <br>
+    Parameters:
+    <input id="InputID_ManifestParameters" type="text" size="100"><br>
+    <!--Priority:
+    <input id="InputID_PriorityBatch" type="number" min="1" max="100" value="25">&nbsp;&nbsp;&nbsp;&nbsp;-->
+    <button onclick="ButtonHandler_StartBatchVideoGen()" style="background-color:pink">Start BATCH Video Generation</button>
+    <p></p>
+</div>
+<div id="SectionID_Log">
+    <hr>
+    Server log level filter:
+    <input id="ID_LogLevelFilterSet" type="number" name="quantity" min="0" max="4" onclick="ButtonHandler_SetLogFilterLevel(this.value)"><br><br>
+    <div id="ID_LogTextArea" style="height:96px;width:800px;overflow:auto;scrollbar-base-color:gold;font-family:sans-serif;padding:10px;"></div></div>
+<div id="SectionID_Special">
+    <hr>
+    Event Session ID:  <div style="display: inline" id="TextID_EventSessionId"></div>&nbsp;&nbsp;&nbsp;&nbsp;
+    Save status:  <div style="display: inline" id="TextID_SaveDirtyStatus"></div>&nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="ButtonID_Save" onclick="ButtonHandler_Save()">SAVE</button>&nbsp;&nbsp;&nbsp;&nbsp;
+    Number of clients connected:  <div style="display: inline" id="TextID_NumClients"></div>&nbsp;&nbsp;&nbsp;&nbsp;
+    <br>
+    STATS FOR THIS CLIENT:&nbsp;&nbsp;&nbsp;&nbsp;Batch table send count:  <div style="display: inline" id="TextID_BatchTableSendCountId"></div>&nbsp;&nbsp;&nbsp;&nbsp;
+    Job table send count:  <div style="display: inline" id="TextID_JobTableSendCountId"></div>&nbsp;&nbsp;&nbsp;&nbsp;
+    Worker table send count:  <div style="display: inline" id="TextID_WorkerTableSendCountId"></div>&nbsp;&nbsp;&nbsp;&nbsp;
+    Basic stats send count:  <div style="display: inline" id="TextID_BasicStatsSendCountId"></div>&nbsp;&nbsp;&nbsp;&nbsp;
+    <ul id="drop-nav">
+        <li>
+            <a href="#" id="MenuAutoSaveFreqHeading"></a>
+            <ul>
+                <li><a href="#" onclick="MenuItemHandler(0, 'AutoSaveFrequencyMs');">Off</a></li>
+                <li><a href="#" onclick="MenuItemHandler(2000, 'AutoSaveFrequencyMs');">2 seconds</a></li>
+                <li><a href="#" onclick="MenuItemHandler(4000, 'AutoSaveFrequencyMs');">4 seconds</a></li>
+                <li><a href="#" onclick="MenuItemHandler(8000, 'AutoSaveFrequencyMs');">8 seconds</a></li>
+                <li><a href="#" onclick="MenuItemHandler(15000, 'AutoSaveFrequencyMs');">15 seconds</a></li>
+                <li><a href="#" onclick="MenuItemHandler(30000, 'AutoSaveFrequencyMs');">30 seconds</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">QUIT (shut down master server)</a>
+            <ul>
+                <li><a href="#" onclick="">Are you sure?</a></li>
+                <li><a href="#" onclick="MenuItemHandlerQuit();">CLICK HERE TO PROCEED</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">END EVENT SESSION</a>
+            <ul>
+                <li><a href="#" onclick="">Are you sure?</a></li>
+                <li><a href="#" onclick="MenuItemHandlerEndEventSession();">CLICK HERE TO PROCEED</a></li>
+            </ul>
+        </li>
+    </ul>
+    <br><br>
+</div>
+<div id="SectionID_GlobalSettings">
+    <hr>
+    <button id="ButtonID_DeleteCompletedJobs" onclick="ButtonHandler_DeleteCompletedJobs()">DELETE all completed jobs</button>
+    <button id="ButtonID_CancelWaitingJobs" onclick="ButtonHandler_CancelWaitingJobs()">CANCEL all waiting jobs</button>
+    <br><br>
+
+    <input id="InputID_TraceAPIURL" type="text" size="10">
+    <button onclick="ButtonHandler_SetGlobalSetting('InputID_TraceAPIURL', 'TraceApiUrl')">Set</button>
+    TraceAPI URL:
+    <div style="display: inline" id="TextID_TraceApiUrl"></div>&nbsp;&nbsp;&nbsp;&nbsp;
+    <br>
+
+    <input id="InputID_ScreenRes" type="text" size="10">
+    <button onclick="ButtonHandler_SetGlobalSetting('InputID_ScreenRes', 'ScreenRes')">Set</button>
+    Screen resolution:
+    <div style="display: inline" id="TextID_ScreenRes"></div>&nbsp;&nbsp;&nbsp;&nbsp;
+    <br>
+
+    <input id="InputID_VideoCodecName" type="text" size="10">
+    <button onclick="ButtonHandler_SetGlobalSetting('InputID_VideoCodecName', 'CodecName')">Set</button>
+    Video codec name:
+    <div style="display: inline" id="TextID_VideoCodecName"></div>&nbsp;&nbsp;&nbsp;&nbsp;
+    <br>
+
+    <input id="InputID_ExtraParameters" type="text" size="10">
+    <button onclick="ButtonHandler_SetGlobalSetting('InputID_ExtraParameters', 'ExtraParameters')">Set</button>
+    Extra parameters:
+    <div style="display: inline" id="TextID_ExtraParameters"></div>&nbsp;&nbsp;&nbsp;&nbsp;
+    <br>
+
+    <input id="InputID_AutoRoundCheckFrequency" type="number" size="10" min="1" max="999">
+    <button onclick="ButtonHandler_SetGlobalSetting('InputID_AutoRoundCheckFrequency', 'AutoRoundCheckFrequency')">Set</button>
+    Auto Round Check Frequency In Seconds:
+    <div style="display: inline" id="TextID_AutoRoundCheckFrequency"></div>&nbsp;&nbsp;&nbsp;&nbsp;
+    <br>
+
+    CURRENT ROUND:
+    <div style="display: inline" id="TextID_CurrentRound"></div>&nbsp;&nbsp;&nbsp;&nbsp;
+    <br>
+
+    <ul id="drop-nav">
+        <li>
+            <a href="#" id="MenuAutoRoundHeading"></a>
+            <ul>
+                <li><a href="#" onclick="MenuItemHandler('On', 'AutoRoundBatch');">On</a></li>
+                <li><a href="#" onclick="MenuItemHandler('Off', 'AutoRoundBatch');">Off</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#" id="MenuFSHeading"></a>
+            <ul>
+                <li><a href="#" onclick="MenuItemHandler('On', 'FullScreen');">On</a></li>
+                <li><a href="#" onclick="MenuItemHandler('Off', 'FullScreen');">Off (Windowed)</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#" id="MenuRTHeading"></a>
+            <ul>
+                <li><a href="#" onclick="MenuItemHandler('On', 'RealTime');">On (variable frame rate)</a></li>
+                <li><a href="#" onclick="MenuItemHandler('Off', 'RealTime');">Off (fixed frame rate)</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#" id="MenuFRHeading"></a>
+            <ul>
+                <li><a href="#" onclick="MenuItemHandler('Fifteen', 'FrameRate');">15 FPS</a></li>
+                <li><a href="#" onclick="MenuItemHandler('TwentyFour', 'FrameRate');">24 FPS</a></li>
+                <li><a href="#" onclick="MenuItemHandler('TwentyFive', 'FrameRate');">25 FPS</a></li>
+                <li><a href="#" onclick="MenuItemHandler('Thirty', 'FrameRate');">30 FPS</a></li>
+                <li><a href="#" onclick="MenuItemHandler('Fifty', 'FrameRate');">50 FPS</a></li>
+                <li><a href="#" onclick="MenuItemHandler('Sixty', 'FrameRate');">60 FPS</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#" id="MenuDSHeading"></a>
+            <ul>
+                <li><a href="#" onclick="MenuItemHandler('Original', 'DownScale');">Original</a></li>
+                <li><a href="#" onclick="MenuItemHandler('Half', 'DownScale');">Half</a></li>
+                <li><a href="#" onclick="MenuItemHandler('Quarter', 'DownScale');">Quarter</a></li>
+                <li><a href="#" onclick="MenuItemHandler('Eighth', 'DownScale');">Eighth</a></li>
+                <li><a href="#" onclick="MenuItemHandler('Sixteenth', 'DownScale');">Sixteenth</a></li>
+            </ul>
+        </li>
+    </ul>
+    <br><br>
+</div>
+<div id="SectionID_Archive">
+    <hr>
+    Current Event Session ID:  <div style="display: inline" id="TextID_EventSessionId2"></div>&nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="ButtonID_ResetToCurrentESID" onclick="ButtonHandler_ResetToCurrentESID()">Switch back to CURRENT event session</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Enter an event session ID:
+    <input id="InputID_NewESID" type="number" min="1" max="999">&nbsp;&nbsp;&nbsp;&nbsp;
+    <button onclick="ButtonHandler_SetNewESID()" style="background-color:pink">Go</button>
+    <br><br>
+</div>
+<div id="SectionID_BatchTable">
+    <hr>
+    <div style="display: block; color: green; font-size: 200%;">BATCHES:<br></div>
+    <button id="ButtonID_BatchPageFirst" onclick="ButtonHandler_BatchPageFirst()" style="width: 50px">First</button>&nbsp;&nbsp;
+    <button id="ButtonID_BatchPageBack10" onclick="ButtonHandler_BatchJumpPageRelative(-10)" style="width: 50px"><< 10</button>&nbsp;&nbsp;
+    <button id="ButtonID_BatchPagePrev" onclick="ButtonHandler_BatchPagePrev()" style="width: 50px">Prev</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="ButtonID_BatchJumpPage0" onclick="ButtonHandler_BatchJumpPageRelative(-3)" style="width: 30px"></button>&nbsp;&nbsp;
+    <button id="ButtonID_BatchJumpPage1" onclick="ButtonHandler_BatchJumpPageRelative(-2)" style="width: 30px"></button>&nbsp;&nbsp;
+    <button id="ButtonID_BatchJumpPage2" onclick="ButtonHandler_BatchJumpPageRelative(-1)" style="width: 30px"></button>&nbsp;&nbsp;
+    <div id="ButtonID_BatchJumpPage3" style="width: 30px; display: inline"></div>&nbsp;&nbsp;
+    <button id="ButtonID_BatchJumpPage4" onclick="ButtonHandler_BatchJumpPageRelative(1)" style="width: 30px"></button>&nbsp;&nbsp;
+    <button id="ButtonID_BatchJumpPage5" onclick="ButtonHandler_BatchJumpPageRelative(2)" style="width: 30px"></button>&nbsp;&nbsp;
+    <button id="ButtonID_BatchJumpPage6" onclick="ButtonHandler_BatchJumpPageRelative(3)" style="width: 30px"></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="ButtonID_BatchPageNext" onclick="ButtonHandler_BatchPageNext()" style="width: 50px">Next</button>&nbsp;&nbsp;
+    <button id="ButtonID_BatchPageForward10" onclick="ButtonHandler_BatchJumpPageRelative(10)" style="width: 50px">10 >></button>&nbsp;&nbsp;
+    <button id="ButtonID_BatchPageLast" onclick="ButtonHandler_BatchPageLast()" style="width: 50px">Last</button>&nbsp;&nbsp;&nbsp;&nbsp;<div style="display: inline" id="pageHeaderID_Batch"></div>
+    <br><br>
+    Filter:&nbsp;&nbsp;
+    <button id="ButtonID_BatchFilterAll" onclick="ButtonHandler_BatchFilterAll()">ALL</button>&nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="ButtonID_BatchFilter0" onclick="ButtonHandler_BatchFilter(0)">Waiting</button>&nbsp;&nbsp;
+    <button id="ButtonID_BatchFilter1" onclick="ButtonHandler_BatchFilter(1)">Active</button>&nbsp;&nbsp;
+    <button id="ButtonID_BatchFilter2" onclick="ButtonHandler_BatchFilter(2)">Completed</button>&nbsp;&nbsp;
+    <br><br>
+    <table id="batchesTable" border="1" cellpadding="2">
+        <tr>
+            <!--NOTE: The following sort field keywords (the ids of the buttons below) must match variable names in the master server-->
+            <td><b><input id="id" type="button" value="" onclick="ButtonHandler_BatchSort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> ID </b></td>
+            <td><b><input id="status" type="button" value="" onclick="ButtonHandler_BatchSort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Status </b></td>
+            <td><b><input id="numJobsComplete" type="button" value="" onclick="ButtonHandler_BatchSort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Jobs Complete </b></td>
+            <td><b><input id="progress" type="button" value="" onclick="ButtonHandler_BatchSort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Progress </b></td>
+            <!--<td><b><input id="priority" type="button" value="" onclick="ButtonHandler_BatchSort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Priority </b></td>-->
+            <td><b><input id="manifestName" type="button" value="" onclick="ButtonHandler_BatchSort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Manifest Name </b></td>
+            <td><b><input id="parameters" type="button" value="" onclick="ButtonHandler_BatchSort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Parameters </b></td>
+            <td><b><input id="errorCode" type="button" value="" onclick="ButtonHandler_BatchSort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Result </b></td>
+            <td><b><input id="completionTime" type="button" value="" onclick="ButtonHandler_BatchSort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Completed </b></td>
+            <td><b><input id="duration" type="button" value="" onclick="ButtonHandler_BatchSort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Batch Dur </b></td>
+        </tr>
+    </table>
+    <input id="InputID_BatchItemsPerPage" type="number" min="1" max="100" style="width: 45px;">
+    <button onclick="ButtonHandler_BatchSetItemsPerPage()">Set items per page</button>
+</div>
+<div id="SectionID_JobsTable">
+    <hr>
+    <div style="display: block; color: green; font-size: 200%;">JOBS:<br></div>
+    <button id="ButtonID_PageFirst" onclick="ButtonHandler_PageFirst()" style="width: 50px">First</button>&nbsp;&nbsp;
+    <button id="ButtonID_PageBack10" onclick="ButtonHandler_JumpPageRelative(-10)" style="width: 50px"><< 10</button>&nbsp;&nbsp;
+    <button id="ButtonID_PagePrev" onclick="ButtonHandler_PagePrev()" style="width: 50px">Prev</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="ButtonID_JumpPage0" onclick="ButtonHandler_JumpPageRelative(-3)" style="width: 30px"></button>&nbsp;&nbsp;
+    <button id="ButtonID_JumpPage1" onclick="ButtonHandler_JumpPageRelative(-2)" style="width: 30px"></button>&nbsp;&nbsp;
+    <button id="ButtonID_JumpPage2" onclick="ButtonHandler_JumpPageRelative(-1)" style="width: 30px"></button>&nbsp;&nbsp;
+    <div id="ButtonID_JumpPage3" style="width: 30px; display: inline"></div>&nbsp;&nbsp;
+    <button id="ButtonID_JumpPage4" onclick="ButtonHandler_JumpPageRelative(1)" style="width: 30px"></button>&nbsp;&nbsp;
+    <button id="ButtonID_JumpPage5" onclick="ButtonHandler_JumpPageRelative(2)" style="width: 30px"></button>&nbsp;&nbsp;
+    <button id="ButtonID_JumpPage6" onclick="ButtonHandler_JumpPageRelative(3)" style="width: 30px"></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="ButtonID_PageNext" onclick="ButtonHandler_PageNext()" style="width: 50px">Next</button>&nbsp;&nbsp;
+    <button id="ButtonID_PageForward10" onclick="ButtonHandler_JumpPageRelative(10)" style="width: 50px">10 >></button>&nbsp;&nbsp;
+    <button id="ButtonID_PageLast" onclick="ButtonHandler_PageLast()" style="width: 50px">Last</button>&nbsp;&nbsp;&nbsp;&nbsp;<div style="display: inline" id="pageHeaderID"></div>
+    <br><br>
+    Filter:&nbsp;&nbsp;
+    <button id="ButtonID_FilterAll" onclick="ButtonHandler_FilterAll()">ALL</button>&nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="ButtonID_Filter0" onclick="ButtonHandler_Filter(0)">Waiting</button>&nbsp;&nbsp;
+    <button id="ButtonID_Filter1" onclick="ButtonHandler_Filter(1)">Active</button>&nbsp;&nbsp;
+    <button id="ButtonID_Filter2" onclick="ButtonHandler_Filter(2)">Successful</button>&nbsp;&nbsp;
+    <button id="ButtonID_Filter3" onclick="ButtonHandler_Filter(3)">Failed</button>&nbsp;&nbsp;
+    <button id="ButtonID_Filter4" onclick="ButtonHandler_Filter(4)">Cancelled</button>&nbsp;&nbsp;
+    <button id="ButtonID_Filter5" onclick="ButtonHandler_Filter(5)">Killed</button>&nbsp;&nbsp;
+    <br><br>
+    <table id="jobsTable" border="1" cellpadding="2">
+        <tr>
+            <td>&nbsp;</td>
+            <!--NOTE: The following sort field keywords (the ids of the buttons below) must match variable names in the master server-->
+            <td><b><input id="id" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> ID </b></td>
+            <td><b><input id="status" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Status </b></td>
+            <td><b><input id="progress" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Progress </b></td>
+            <td><b><input id="worker" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Worker </b></td>
+            <td><b><input id="gpuIndex" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> GPU </b></td>
+            <td><b><input id="priority" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Priority </b></td>
+            <td><b><input id="batchId" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Batch </b></td>
+            <td><b><input id="HPName" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> HP Name </b></td>
+            <td><b><input id="parameters" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Parameters </b></td>
+            <td><b><input id="errorCode" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Result </b></td>
+            <td><b><input id="videoName" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Video Name</b></td>
+            <td><b><input id="completionTime" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Completed </b></td>
+            <td><b><input id="duration" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Job Dur </b></td>
+            <td><b><input id="videoDuration" type="button" value="" onclick="ButtonHandler_Sort(id);" style="height: 18px; width: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"> Vid Dur </b></td>
+            <td><b> </b></td> <!--- This is the column for the play/download buttons -->
+        </tr>
+    </table>
+    <input id="InputID_ItemsPerPage" type="number" min="1" max="100" style="width: 45px;">
+    <button onclick="ButtonHandler_SetItemsPerPage()">Set items per page</button>
+    <hr>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+    "use strict";
+
+    var workerVGSPort = 8004;
+    var ftpPort = 8006;
+
+    console.log("ip is " + location.host);
+
+    var socket = io.connect(location.host);
+
+    console.log("In HTML's socket handler");
+
+    // Note these two enums are also defined in VideoGenServer.js
+    var jobStatusEnum = {
+        WAITING: 0,
+        ACTIVE: 1,
+        COMPLETED_SUCCESS: 2,
+        COMPLETED_FAIL: 3,
+        CANCELLED: 4,
+        KILLED: 5
+    };
+
+    var batchStatusEnum = {
+        WAITING: 0,
+        ACTIVE: 1,
+        COMPLETED_SUCCESS: 2,
+        COMPLETED_FAIL: 3
+        // For now let's just go with the above
+    };
+
+    var maxRequestedJobs;
+    var numJobsRequested;
+    var numJobsActiveTotal = 0;
+    var numJobsCompletedSuccessfully;
+    var numJobsFailed;
+    var numJobsCancelled;
+    var numJobsKilled;
+    var numJobRecordsTotal = 0;
+
+    var eventSessionId = 0;
+    var saveDirty = false;
+
+    var numClientsConnected = 0;
+
+    var adminLevel = 2;
+
+    // Global settings
+    var gsTraceApiUrl;
+    var gsScreenRes;
+    var gsFullScreen;
+    var gsCodecName;
+    var gsExtraParameters;
+    var gsRealTime;
+    var gsFrameRate;
+    var gsDownScale;
+    var gsCurrentRound;
+    var gsAutoRoundBatch;
+    var gsAutoRoundCheckFrequency;
+    var gsAutoSaveFrequencyMs;
+
+    var curPage = 0;
+    var curPageBatch = 0;
+    var jobTableSendCount = 0;
+    var workerTableSendCount = 0;
+    var basicStatsSendCount = 0;
+    var batchTableSendCount = 0;
+
+    var knownWorkerCount = 0;
+
+    var workerUpdateTimeout;
+
+    var logEntries = [];
+    var logFilterLevel = 4;
+
+    var workerConfirmRestartActive = [];
+    var workerConfirmShutdownActive = [];
+    var columnRestart = 3;
+    var columnShutdown = 4;
+
+    var sectionWorkerTable = true;
+    var sectionWorkerTableSpecial = true;
+    var sectionSingleLaunch = true;
+    var sectionBatchLaunch = false;
+    var sectionLog = false;
+    var sectionSpecial = false;
+    var sectionGlobalSettings = false;
+    var sectionArchive = false;
+    var sectionBatchTable = true;
+    var sectionJobsTable = true;
+
+    // And yes I know this is very hackable.  It's just to help prevent accidental clicks that could lead to problems
+    var levelWorkerTable = 1;
+    var levelWorkerTableSpecial = 2;
+    var levelSingleLaunch = 0;
+    var levelBatchLaunch = 0;
+    var levelLog = 0;
+    var levelSpecial = 2;
+    var levelGlobalSettings = 1;
+    var levelArchive = 2;
+    var levelBatchTable = 0;
+    var levelJobsTable = 0;
+
+    UpdateSectionButtonsVisibility();
+    UpdateSections();
+
+    function SetSectionButtonState(buttonId, newState, sectionId, requiredAdminLevel) {
+        if (newState && requiredAdminLevel > adminLevel) {
+            newState = false;
+        }
+        var button = document.getElementById(buttonId);
+        button.style.backgroundColor = newState ? "lightgreen" : "lightgrey";
+
+        var section = document.getElementById(sectionId);
+        section.style = newState ? "display: block;" : "display: none;";
+    }
+
+    function SetSectionState(buttonId, newState, sectionId, requiredAdminLevel) {
+
+        SetSectionButtonState(buttonId, newState, sectionId, requiredAdminLevel);
+
+        if (sectionId === 'SectionID_WorkerTable') {
+            socket.emit('set showing worker table', { showingKey: newState });
+            if (newState === true) {
+                socket.emit('get workers status');
+                periodicLoadMonitorUpdate();
+            } else {
+                clearTimeout(workerUpdateTimeout);
+            }
+        }
+
+        if (sectionId === 'SectionID_WorkerTableSpecial') {
+            socket.emit('set showing worker table special', { showingKey: newState });
+            socket.emit('get workers status');
+        }
+
+        if (sectionId === 'SectionID_JobsTable') {
+            socket.emit('set showing job table', { showingKey: newState });
+            if (newState === true) {
+                socket.emit('get jobs status');
+            }
+        }
+
+        if (sectionId === 'SectionID_BatchTable') {
+            socket.emit('set showing batch table', { showingKey: newState });
+            if (newState === true) {
+                socket.emit('get batches status');
+            }
+        }
+    }
+
+    function ButtonHandler_AdminLogin() {
+        var adminPassword = document.getElementById("InputID_AdminPassword").value;
+        socket.emit('admin login', { password: adminPassword });
+    }
+
+    socket.on('admin login response', function (data) {
+        var text = data['responseText'];
+        document.getElementById("TextID_Admin2").innerHTML = text;
+        document.getElementById("InputID_AdminPassword").value = "";
+    });
+
+    function UpdateSectionButtonsVisibility() {
+        document.getElementById('ButtonID_ToggleWorkerTable').style = adminLevel >= levelWorkerTable ? "" : "display: none;";
+        document.getElementById('ButtonID_ToggleWorkerTableSpecial').style = adminLevel >= levelWorkerTableSpecial ? "" : "display: none;";
+        document.getElementById('ButtonID_ToggleSingleLaunch').style = adminLevel >= levelSingleLaunch ? "" : "display: none;";
+        document.getElementById('ButtonID_ToggleBatchLaunch').style = adminLevel >= levelBatchLaunch ? "" : "display: none;";
+        document.getElementById('ButtonID_ToggleLog').style = adminLevel >= levelLog ? "" : "display: none;";
+        document.getElementById('ButtonID_ToggleSpecial').style = adminLevel >= levelSpecial ? "" : "display: none;";
+        document.getElementById('ButtonID_ToggleGlobalSettings').style = adminLevel >= levelGlobalSettings ? "" : "display: none;";
+        document.getElementById('ButtonID_ToggleArchive').style = adminLevel >= levelArchive ? "" : "display: none;";
+        document.getElementById('ButtonID_ToggleBatchTable').style = adminLevel >= levelBatchTable ? "" : "display: none;";
+        document.getElementById('ButtonID_ToggleJobsTable').style = adminLevel >= levelJobsTable ? "" : "display: none;";
+    }
+
+    //function UpdateSectionButtons() {
+    //    SetSectionButtonState('ButtonID_ToggleWorkerTable', sectionWorkerTable, 'SectionID_WorkerTable', levelWorkerTable);
+    //    SetSectionButtonState('ButtonID_ToggleWorkerTableSpecial', sectionWorkerTableSpecial, 'SectionID_WorkerTableSpecial', levelWorkerTableSpecial);
+    //    SetSectionButtonState('ButtonID_ToggleSingleLaunch', sectionSingleLaunch, 'SectionID_SingleLaunch', levelSingleLaunch);
+    //    SetSectionButtonState('ButtonID_ToggleBatchLaunch', sectionBatchLaunch, 'SectionID_BatchLaunch', levelBatchLaunch);
+    //    SetSectionButtonState('ButtonID_ToggleLog', sectionLog, 'SectionID_Log', levelLog);
+    //    SetSectionButtonState('ButtonID_ToggleSpecial', sectionSpecial, 'SectionID_Special', levelSpecial);
+    //    SetSectionButtonState('ButtonID_ToggleGlobalSettings', sectionGlobalSettings, 'SectionID_GlobalSettings', levelGlobalSettings);
+    //    SetSectionButtonState('ButtonID_ToggleArchive', sectionArchive, 'SectionID_Archive', 2);
+    //    SetSectionButtonState('ButtonID_ToggleBatchTable', sectionBatchTable, 'SectionID_BatchTable', levelBatchTable);
+    //    SetSectionButtonState('ButtonID_ToggleJobsTable', sectionJobsTable, 'SectionID_JobsTable', levelJobsTable);
+    //}
+
+    function UpdateSections() {
+        SetSectionState('ButtonID_ToggleWorkerTable', sectionWorkerTable, 'SectionID_WorkerTable', levelWorkerTable);
+        SetSectionState('ButtonID_ToggleWorkerTableSpecial', sectionWorkerTableSpecial, 'SectionID_WorkerTableSpecial', levelWorkerTableSpecial);
+        SetSectionState('ButtonID_ToggleSingleLaunch', sectionSingleLaunch, 'SectionID_SingleLaunch', levelSingleLaunch);
+        SetSectionState('ButtonID_ToggleBatchLaunch', sectionBatchLaunch, 'SectionID_BatchLaunch', levelBatchLaunch);
+        SetSectionState('ButtonID_ToggleLog', sectionLog, 'SectionID_Log', levelLog);
+        SetSectionState('ButtonID_ToggleSpecial', sectionSpecial, 'SectionID_Special', levelSpecial);
+        SetSectionState('ButtonID_ToggleGlobalSettings', sectionGlobalSettings, 'SectionID_GlobalSettings', levelGlobalSettings);
+        SetSectionState('ButtonID_ToggleArchive', sectionArchive, 'SectionID_Archive', 2);
+        SetSectionState('ButtonID_ToggleBatchTable', sectionBatchTable, 'SectionID_BatchTable', levelBatchTable);
+        SetSectionState('ButtonID_ToggleJobsTable', sectionJobsTable, 'SectionID_JobsTable', levelJobsTable);
+    }
+
+    function UpdateBasicDisplay() {
+        document.getElementById("DisplayID_Status").innerHTML = numJobsActiveTotal === 0 ? "Idle" : "ACTIVE";
+        document.getElementById("DisplayID_MaxRequestedJobs").innerHTML = maxRequestedJobs;
+        document.getElementById("DisplayID_NumRequestedJobs").innerHTML = numJobsRequested;
+        document.getElementById("DisplayID_NumActiveJobs").innerHTML = numJobsActiveTotal;
+        document.getElementById("DisplayID_NumSuccessfulJobs").innerHTML = numJobsCompletedSuccessfully;
+        document.getElementById("DisplayID_NumFailedJobs").innerHTML = numJobsFailed;
+        document.getElementById("DisplayID_NumCancelledJobs").innerHTML = numJobsCancelled;
+        document.getElementById("DisplayID_NumKilledJobs").innerHTML = numJobsKilled;
+        var totalInQueue = parseInt(numJobsRequested) + parseInt(numJobsActiveTotal);
+        document.getElementById("DisplayID_TotalUnfinishedJobs").innerHTML = totalInQueue;
+        document.getElementById("ButtonID_CancelWaitingJobs").disabled = !(numJobsRequested > 0);
+        document.getElementById("ButtonID_DeleteCompletedJobs").disabled = numJobRecordsTotal === 0;
+    }
+
+    function UpdateGlobalSettingsDisplay() {
+        document.getElementById("TextID_TraceApiUrl").innerHTML = gsTraceApiUrl;
+        document.getElementById("TextID_ScreenRes").innerHTML = gsScreenRes;
+        document.getElementById("TextID_VideoCodecName").innerHTML = gsCodecName;
+        document.getElementById("TextID_ExtraParameters").innerHTML = gsExtraParameters;
+        document.getElementById("TextID_AutoRoundCheckFrequency").innerHTML = gsAutoRoundCheckFrequency;
+        document.getElementById("TextID_CurrentRound").innerHTML = gsCurrentRound;
+
+        document.getElementById("MenuAutoRoundHeading").innerHTML = "Auto Round Batch: " + gsAutoRoundBatch;
+        document.getElementById("MenuFSHeading").innerHTML = "Full Screen: " + gsFullScreen;
+        document.getElementById("MenuRTHeading").innerHTML = "Real Time Mode: " + gsRealTime;
+        document.getElementById("MenuFRHeading").innerHTML = "Frame Rate: " + gsFrameRate;
+        document.getElementById("MenuDSHeading").innerHTML = "Down Scale: " + gsDownScale;
+    }
+
+    function UpdateArchiveDisplay() {
+        // todo show currently set event session ID
+    }
+
+    function UpdateSpecialDisplay() {
+        document.getElementById("TextID_EventSessionId").innerHTML = eventSessionId;
+        document.getElementById("TextID_EventSessionId2").innerHTML = eventSessionId;
+        document.getElementById("TextID_SaveDirtyStatus").innerHTML = saveDirty ? "DIRTY" : "Saved";
+        document.getElementById("TextID_NumClients").innerHTML = numClientsConnected;
+        document.getElementById("MenuAutoSaveFreqHeading").innerHTML = "Auto-Save Freq (ms): " + (gsAutoSaveFrequencyMs === 0 ? "OFF" : gsAutoSaveFrequencyMs);
+    }
+
+    function UpdateLogDisplay() {
+        var logText = "";
+        for (var i = 0, len = logEntries.length; i < len; i++) {
+            if (logEntries[i].level <= logFilterLevel) {
+                logText += logEntries[i].msg + "<br>";
+            }
+        }
+        var scrollBox = document.getElementById("ID_LogTextArea");
+        scrollBox.innerHTML = logText;
+        scrollBox.scrollTop = scrollBox.scrollHeight;
+    }
+
+    function AddProgressBar(cell, percentage, additionalString, widthPx) {
+        cell.style.whiteSpace = "nowrap";
+        if (percentage < 0) {
+            cell.innerHTML = "n/a";
+        } else {
+            percentage = percentage.toFixed(1);
+            cell.innerHTML = "<progress max='100'><span>0</span>%</progress>&nbsp;" + (percentage < 100 ? "&nbsp;" : "") + (percentage < 10 ? "&nbsp;" : "") + percentage + "%";
+            cell.getElementsByTagName('progress')[0].value = percentage;
+            cell.getElementsByTagName('span')[0].innerHTML = percentage;
+            if (additionalString != null)
+                cell.innerHTML += additionalString;
+            if (widthPx == null)
+                widthPx = 80;
+            cell.style = "width: " + widthPx + "px";
+        }
+    }
+
+    function CelsiusToFahrenheit(celsius) {
+        return (celsius * 9/5) + 32;
+    }
+
+    socket.on('update workers', function (data) {
+        //console.log("update workers " + new Date().getTime());
+        var statuses = data['dataKey'];
+        var latestBuildVersion = data['latestBuildVersionKey'];
+        var latestPackagesVersion = data['latestPackagesVersionKey'];
+        workerTableSendCount = data['sendCountKey'];
+        document.getElementById("TextID_WorkerTableSendCountId").innerHTML = workerTableSendCount;
+
+        // MAIN WORKER TABLE:
+        var table = document.getElementById("workersTable");
+
+        var totalMaxRegJobs = 0;
+        var totalMaxSpecJobs = 0;
+        var totalActiveJobs = 0;
+        var totalActiveJobsReg = 0;
+        var totalActiveJobsSpec = 0;
+        var totalCpuLoad = 0;
+        var totalMemLoad = 0;
+        var totalGpuLoad = 0;
+        var totalGpus = 0;
+        var cell;
+
+        var numWorkers = statuses.length;
+
+        if(numWorkers != knownWorkerCount) {
+            while(table.rows.length > 1) table.deleteRow(1);
+        }
+        
+        for (var i = 0; i < numWorkers; i++) {
+
+            if (table.rows.length < i + 2) {    // Lazy-add a row for this worker
+                var newRow = table.insertRow(table.rows.length);
+                for (var j = 0; j < 17; j++) {
+                    newRow.insertCell();
+                }
+                // Now create the buttons that appear in the rows.  We do this one time only so that button creation does not interfere with button clicks
+                newRow.cells[7].innerHTML = '<input type="button" value="-" onclick="ButtonHandler_ChangeMaxJobs(this,7,-1,\x27regular\x27)"><input type="button" value="+" onclick="ButtonHandler_ChangeMaxJobs(this,7,1,\x27regular\x27)">   <b></b>';
+                newRow.cells[8].innerHTML = '<input type="button" value="-" onclick="ButtonHandler_ChangeMaxJobs(this,8,-1,\x27special\x27)"><input type="button" value="+" onclick="ButtonHandler_ChangeMaxJobs(this,8,1,\x27special\x27)">   <b></b>';
+
+                workerConfirmRestartActive.push(false);
+                workerConfirmShutdownActive.push(false);
+            }
+
+            var row = table.rows[i + 1];
+
+            var worker = statuses[i];
+
+            var disableAllButtons = (worker.pendingRestartRequest || worker.pendingShutdownRequest);   // (If restarting or shutting down)
+
+            row.cells[0].innerHTML = i;
+            row.cells[1].innerHTML = worker.ip;
+            row.cells[2].innerHTML = worker.friendlyName;
+            row.cells[3].innerHTML = worker.connected ? "Connected" : "NOT connected";
+            row.cells[3].style = worker.connected ? "color:black" : "color:red";
+            var activeJobs = worker.numActiveJobs;
+            row.cells[4].innerHTML = activeJobs;
+            var activeJobsReg = worker.numActiveJobsRegular;
+            row.cells[5].innerHTML = activeJobsReg;
+            var activeJobsSpec = worker.numActiveJobsSpecial;
+            row.cells[6].innerHTML = activeJobsSpec;
+
+            var maxRegJobs = worker.maxJobsRegular;
+            cell = row.cells[7];
+            cell.getElementsByTagName('b')[0].innerHTML = maxRegJobs;
+            cell.getElementsByTagName('input')[0].disabled = disableAllButtons;
+            cell.getElementsByTagName('input')[1].disabled = disableAllButtons;
+            cell.style.whiteSpace = "nowrap";
+            var maxSpecJobs = worker.maxJobsSpecial;
+            cell = row.cells[8];
+            cell.getElementsByTagName('b')[0].innerHTML = maxSpecJobs;
+            cell.getElementsByTagName('input')[0].disabled = disableAllButtons;
+            cell.getElementsByTagName('input')[1].disabled = disableAllButtons;
+            cell.style.whiteSpace = "nowrap";
+
+            var loadJobs = row.cells[9];
+            var mj = maxRegJobs + maxSpecJobs;
+            var aj = activeJobsReg + activeJobsSpec;
+            var jobUtilizationPct = mj > 0 ? aj * 100 / mj : -1;
+            AddProgressBar(loadJobs, jobUtilizationPct);
+
+            var loadCellCpu = row.cells[10];
+            var loadPct = worker.loadCPU;
+            AddProgressBar(loadCellCpu, loadPct);
+            totalCpuLoad += loadPct;
+
+            var loadCellMem = row.cells[11];
+            var memPct = worker.loadMem;
+            AddProgressBar(loadCellMem, memPct);
+            totalMemLoad += memPct;
+
+            var numGpus = worker.numGPUs;
+
+            var loadCellGpu = row.cells[12];
+            var pctsByGpuString = " (";
+            var tempsByGpuString = "";
+            for (var j = 0; j < numGpus; j++) {
+                pctsByGpuString += worker.loadGPUArray[j].load;
+                //tempsByGpuString += (CelsiusToFahrenheit(worker.loadGPUArray[j].temperature).toFixed(0);
+                tempsByGpuString += worker.loadGPUArray[j].temperature.toFixed(0);
+                if (j < numGpus - 1) {
+                    pctsByGpuString += ",";
+                    tempsByGpuString += ",";
+                }
+            }
+            pctsByGpuString += ")";
+            var gpuPct = worker.loadGPU;
+            AddProgressBar(loadCellGpu, gpuPct, pctsByGpuString, 110);
+            totalGpuLoad += gpuPct;
+
+            row.cells[13].innerHTML = tempsByGpuString;
+
+            row.cells[14].innerHTML = numGpus;
+
+            // Disk space
+            cell = row.cells[15];
+            var drive1Used = worker.disk1SpaceUsed;
+            var drive1Total = worker.disk1SpaceTotal;
+            if (!isNaN(drive1Used) && !isNaN(drive1Total) && drive1Total !== 0) {
+                var drive1PctUsed = drive1Used * 100 / drive1Total;
+                var drive1GBFree = ((drive1Total - drive1Used) / 1024 / 1024).toFixed(0);
+                AddProgressBar(cell, drive1PctUsed, "; " + drive1GBFree + "G free", 180);
+            } else {
+                cell.innerHTML = "Unknown";
+            }
+            cell = row.cells[16];
+            var drive2Used = worker.disk2SpaceUsed;
+            var drive2Total = worker.disk2SpaceTotal;
+            if (!isNaN(drive2Used) && !isNaN(drive2Total) && drive2Total !== 0) {
+                var drive2PctUsed = drive2Used * 100 / drive2Total;
+                var drive2GBFree = ((drive2Total - drive2Used) / 1024 / 1024).toFixed(0);
+                AddProgressBar(cell, drive2PctUsed, "; " + drive2GBFree + "G free", 180);
+            } else {
+                cell.innerHTML = "Unknown";
+            }
+
+            totalMaxRegJobs += maxRegJobs;
+            totalMaxSpecJobs += maxSpecJobs;
+            totalActiveJobs += activeJobs;
+            totalActiveJobsReg += activeJobsReg;
+            totalActiveJobsSpec += activeJobsSpec;
+            totalGpus += numGpus;
+        }
+
+        // Totals row
+        if (table.rows.length < numWorkers + 2) {   // Lazy-add the totals row
+            var newTotalsRow = table.insertRow(table.rows.length);
+            for (var j = 0; j < 17; j++) {
+                newTotalsRow.insertCell();
+            }
+        }
+        var totalsRow = table.rows[table.rows.length - 1];
+
+        totalsRow.style = "font-weight:bold";
+        var cellTotals = totalsRow.cells[0];
+        cellTotals.innerHTML = "Totals:";
+        cellTotals.bgColor = "lightblue";
+        totalsRow.cells[1].bgColor = "lightblue";
+        totalsRow.cells[2].bgColor = "lightblue";
+        totalsRow.cells[3].bgColor = "lightblue";
+        totalsRow.cells[4].innerHTML = totalActiveJobs;
+        totalsRow.cells[5].innerHTML = totalActiveJobsReg;
+        totalsRow.cells[6].innerHTML = totalActiveJobsSpec;
+        totalsRow.cells[7].innerHTML = totalMaxRegJobs;
+        totalsRow.cells[8].innerHTML = totalMaxSpecJobs;
+        cell = totalsRow.cells[9];
+        var totalSlots = totalMaxRegJobs + totalMaxSpecJobs;
+        var pct = totalSlots > 0 ? totalActiveJobs * 100 / totalSlots : -1;
+        AddProgressBar(cell, pct);
+
+        if (numWorkers > 0) {
+            totalCpuLoad /= numWorkers;
+            totalMemLoad /= numWorkers;
+            totalGpuLoad /= numWorkers;
+        }
+
+        cell = totalsRow.cells[10];
+        AddProgressBar(cell, totalCpuLoad);
+        cell = totalsRow.cells[11];
+        AddProgressBar(cell, totalMemLoad);
+        cell = totalsRow.cells[12];
+        AddProgressBar(cell, totalGpuLoad);
+        totalsRow.cells[13].bgColor = "lightblue";
+        totalsRow.cells[14].innerHTML = totalGpus;
+
+        totalsRow.cells[15].bgColor = "lightblue";
+        totalsRow.cells[16].bgColor = "lightblue";
+
+
+        // SECOND ("SPECIAL") WORKER TABLE:
+        var tableSpecial = document.getElementById("workersTableSpecial");
+
+        tableSpecial.rows[0].bgColor = "lightblue";    // Can this be moved into the HTML?
+
+        if(numWorkers != knownWorkerCount) {
+            while(tableSpecial.rows.length > 1) tableSpecial.deleteRow(1);
+        }
+
+        for (var i = 0; i < numWorkers; i++) {
+
+            if (tableSpecial.rows.length < i + 2) {    // Lazy-add a row for this worker
+                var newRow = tableSpecial.insertRow(tableSpecial.rows.length);
+                for (var j = 0; j < 5; j++) {
+                    newRow.insertCell();
+                }
+                // Now create the buttons that appear in the rows.  We do this one time only so that button creation does not interfere with button clicks
+                newRow.cells[1].innerHTML = '<b></b>&nbsp;<input type="button" value="Soft Pause" onclick="ButtonHandler_SoftPause(this)">&nbsp;<input type="button" value="Hard Pause" onclick="ButtonHandler_HardPause(this)">&nbsp;<input type="button" value="Un-Pause" onclick="ButtonHandler_UnPause(this)">';
+                newRow.cells[2].innerHTML = '<b></b>&nbsp;<input type="button" value="KILL All Jobs On Worker" onclick="ButtonHandler_KillAllActiveOnWorker(this)">';
+                ResetButtonForWorkerRestart(newRow.cells[columnRestart]);
+                ResetButtonForWorkerShutdown(newRow.cells[columnShutdown]);
+            }
+
+            var specialRow = tableSpecial.rows[i + 1];
+
+            var worker = statuses[i];
+
+            specialRow.cells[0].innerHTML = worker.friendlyName;
+
+            var disableAllButtons = (worker.pendingRestartRequest || worker.pendingShutdownRequest);
+
+            cell = specialRow.cells[1];
+            var buttonSoftPause = cell.getElementsByTagName('input')[0];
+            var buttonHardPause = cell.getElementsByTagName('input')[1];
+            var buttonUnPause = cell.getElementsByTagName('input')[2];
+            if (worker.paused) {
+                buttonSoftPause.disabled = true;
+                buttonHardPause.disabled = true;
+                buttonUnPause.disabled = disableAllButtons;
+            } else {
+                buttonSoftPause.disabled = disableAllButtons;
+                buttonHardPause.disabled = disableAllButtons;
+                buttonUnPause.disabled = true;
+            }
+
+            cell = specialRow.cells[columnRestart];
+            if (!workerConfirmRestartActive[i]) {
+                SetButtonStateForWorkerRestart(cell, worker.pendingRestartRequest, disableAllButtons);
+            }
+
+            cell = specialRow.cells[columnShutdown];
+            if (!workerConfirmShutdownActive[i]) {
+                SetButtonStateForWorkerShutdown(cell, worker.pendingShutdownRequest, disableAllButtons);
+            }
+        }
+    });
+
+    function ResetButtonForWorkerRestart(cell) {
+        cell.innerHTML = '<b></b>&nbsp;<input type="button" value="" onclick="ButtonHandler_RestartWorkerRequest(this)">';
+    }
+
+    function SetButtonStateForWorkerRestart(cell, active, disableAllButtons) {
+        var button = cell.getElementsByTagName('input')[0];
+        if (active) {
+            button.disabled = true;
+            button.value = "Restarting Server...";
+            button.style = "color: red";
+        } else {
+            button.disabled = disableAllButtons;
+            button.value = "RESTART Server";
+            button.style = "color: black";
+        }
+    }
+
+    function ResetButtonForWorkerShutdown(cell) {
+        cell.innerHTML = '<b></b>&nbsp;<input type="button" value="" onclick="ButtonHandler_ShutdownWorkerRequest(this)">';
+    }
+
+    function SetButtonStateForWorkerShutdown(cell, active, disableAllButtons) {
+        var button = cell.getElementsByTagName('input')[0];
+        if (active) {
+            button.disabled = true;
+            button.value = "Shutting Down Server...";
+            button.style = "color: red";
+        } else {
+            button.disabled = disableAllButtons;
+            button.value = "SHUT DOWN Server";
+            button.style = "color: black";
+        }
+    }
+
+    socket.on('update basic status', function (data) {
+        numJobRecordsTotal = data['numJobRecordsTotalKey'];
+        maxRequestedJobs = data['maxRequestedJobsKey'];
+        numJobsRequested = data['numWaitingJobsKey'];
+        numJobsActiveTotal = data['numActiveJobsTotalKey'];
+        numJobsCompletedSuccessfully = data['numSuccessfullyCompletedJobsKey'];
+        numJobsFailed = data['numFailedJobsKey'];
+        numJobsCancelled = data['numCancelledJobsKey'];
+        numJobsKilled = data['numKilledJobsKey'];
+        saveDirty = data['saveDirtyKey'];
+        basicStatsSendCount = data['sendCountKey'];
+        var newAdminLevel = parseInt(data['adminLevel']);
+
+        if (newAdminLevel !== adminLevel) {
+            adminLevel = newAdminLevel;
+            UpdateSectionButtonsVisibility();
+            UpdateSections();
+        }
+
+        document.getElementById("TextID_BasicStatsSendCountId").innerHTML = basicStatsSendCount;
+        document.getElementById("TextID_Admin1").innerHTML = adminLevel < 1 ? "" : adminLevel < 2 ? "L:1" : "L:2";
+
+        UpdateBasicDisplay();
+        UpdateSpecialDisplay();
+    });
+
+    socket.on('update global settings', function (data) {
+        eventSessionId = data['eventSessionIdKey'];
+        saveDirty = data['saveDirtyKey'];
+
+        gsTraceApiUrl = data['traceApiUrlKey'];
+        gsScreenRes = data['screenResKey'];
+        gsFullScreen = data['fullScreenKey'];
+        gsCodecName = data['codecNameKey'];
+        gsExtraParameters = data['extraParametersKey'];
+        gsRealTime = data['realTimeKey'];
+        gsFrameRate = data['frameRateKey'];
+        gsDownScale = data['downScaleKey'];
+        gsCurrentRound = data['currentRoundKey'];
+        gsAutoRoundBatch = data['autoRoundBatchKey'];
+        gsAutoRoundCheckFrequency = data['autoRoundCheckFrequency'];
+        gsAutoSaveFrequencyMs = data['autoSaveFrequencyMsKey'];
+
+        var masterHasShutDown = data['masterHasShutDownKey'];
+        var section = document.getElementById('TextID_MasterShutDown');
+        if (masterHasShutDown) {
+            section.style = "display: block; color: red; font-size: 200%";
+        } else {
+            section.style = "display: none";
+        }
+
+        numClientsConnected = data['numClientsKey'];
+
+        UpdateGlobalSettingsDisplay();
+        UpdateSpecialDisplay();
+    });
+
+    socket.on('update jobs', function (data) {
+        //console.log("received 'update jobs'");
+        curPage = data['curPageKey'];
+        var itemsPerPage = data['itemsPerPageKey'];
+        var totalItems = data['totalJobsKey'];
+        var totalFilteredItems = data['totalFilteredItemsKey'];
+        var jobStatusFilter = data['jobStatusFilterKey'];
+        var sortFieldKey = data['sortFieldKey'];
+        var sortAscending = data['ascendingKey'];
+        var numPages = Math.floor((totalFilteredItems - 1) / itemsPerPage) + 1;
+        jobTableSendCount = data['sendCountKey'];
+        document.getElementById("TextID_JobTableSendCountId").innerHTML = jobTableSendCount;
+
+        var h = document.getElementById("pageHeaderID");
+        if (totalFilteredItems > 0) {
+            var firstItem = (curPage * itemsPerPage) + 1;
+            var lastItem = firstItem + itemsPerPage - 1;
+            if (lastItem > totalFilteredItems)
+                lastItem = totalFilteredItems;
+            h.innerHTML = "Page " + (curPage + 1) + " of " + numPages + ":  Showing items " + firstItem + "-" + lastItem + " of " + totalFilteredItems + " items";
+        } else {
+            h.innerHTML = "(No items shown)";
+        }
+        if (jobStatusFilter !== -1) {
+            h.innerHTML += "; Filtered from " + totalItems + " items";
+        }
+        h.innerHTML += "; Sorted by '" + sortFieldKey + "' in " + (sortAscending ? "ascending" : "descending") + " order";
+
+        var isOnLastPage = (curPage === (numPages - 1));
+        document.getElementById("ButtonID_PageFirst").disabled = curPage === 0;
+        document.getElementById("ButtonID_PageBack10").disabled = curPage === 0;
+        document.getElementById("ButtonID_PagePrev").disabled = curPage === 0;
+        document.getElementById("ButtonID_PageNext").disabled = isOnLastPage;
+        document.getElementById("ButtonID_PageForward10").disabled = isOnLastPage;
+        document.getElementById("ButtonID_PageLast").disabled = isOnLastPage;
+
+        for (var i = 0, p = curPage - 2; i < 7; i++, p++) {
+            var buttonIDstring = "ButtonID_JumpPage" + i;
+            var e = document.getElementById(buttonIDstring);
+            if (p < 1 || p > numPages) {
+                e.style.visibility = 'hidden';
+            } else {
+                e.innerHTML = p;
+                e.style.visibility = 'visible';
+            }
+        }
+
+        var button = document.getElementById("ButtonID_FilterAll");
+        if (jobStatusFilter === -1) {
+            button.disabled = true;
+            button.style.backgroundColor = "lightgreen";
+        } else {
+            button.disabled = false;
+            button.style.backgroundColor = "lightgrey";
+        }
+
+        for (var i = 0; i < 6; i++) {
+            button = document.getElementById("ButtonID_Filter" + i);
+            if (jobStatusFilter !== -1 && jobStatusFilter & (1 << i)) {
+                button.style.backgroundColor = "lightgreen";
+            } else {
+                button.style.backgroundColor = "lightgrey";
+            }
+        }
+
+        var table = document.getElementById("jobsTable");
+
+        while (table.rows.length > 1) { // Delete all rows except the header row
+            table.deleteRow(1);
+        }
+
+        // Display up/down 'sorted by' widget in the header row
+        var headerRow = table.rows[0];
+        // -1 in the line below because the last column doesn't have the widget
+        for (var c = 1, numCells = headerRow.cells.length - 1; c < numCells; c++) {
+            var cell = headerRow.cells[c];
+            button = cell.getElementsByTagName('input')[0];
+            if (button.id === sortFieldKey) {
+                button.value = sortAscending ? "\u25BC" : "\u25B2";
+            } else {
+                button.value = "";
+            }
+        }
+
+        var statuses = data['jobsDataKey'];
+
+        var mainSectionJobsShown = 0;
+        if (statuses.length > 0) {
+            var regularJobSeen = false;
+            for (var jobDataIndex = 0, len = statuses.length; jobDataIndex < len; jobDataIndex++) {
+                var jobInfo = statuses[jobDataIndex];
+
+                if (!jobInfo.inTrackingSection && !regularJobSeen) {
+                    regularJobSeen = true;
+
+                    var row = table.insertRow(table.rows.length);   // Insert a blank thin row
+                    for (var i = 0; i < 15; i++) {
+                        row.insertCell(i);
+                    }
+                    row.cells[0].style = "height: 8px";
+                }
+                if (regularJobSeen) {
+                    mainSectionJobsShown++;
+                }
+                var row = table.insertRow(table.rows.length);
+                var statusText = "";
+                var htmlText = "";
+                var styleText = "color:black;";
+                var done = true;
+                if (jobInfo.isTracked) {
+                    htmlText += '<b><input type="button" value="Untrack" style="padding: 0px 0px 0px 0px;" onclick="ButtonHandler_ToggleTrack(this,false);">';
+                } else {
+                    htmlText += '<b><input type="button" value="Track" style="padding: 0px 0px 0px 0px;" onclick="ButtonHandler_ToggleTrack(this,true);">';
+                }
+                htmlText += '&nbsp;&nbsp;';
+                switch (jobInfo.status) {
+                    case jobStatusEnum.WAITING:
+                        statusText = "Waiting";
+                        if (adminLevel > 0) {
+                            htmlText += '<input type="button" value="CANCEL" style="width:60px; padding: 0px 0px 0px 0px;" onClick="handleJobCancelButton(this)">';
+                        }
+                        done = false;
+                        break;
+                    case jobStatusEnum.ACTIVE:
+                        statusText = "ACTIVE";
+                        if (adminLevel > 0) {
+                            htmlText += '<input type="button" value="KILL" style="width:60px; padding: 0px 0px 0px 0px;" onClick="handleJobKillButton(this)">';
+                        }
+                        styleText = "color:green;";
+                        done = false;
+                        break;
+                    case jobStatusEnum.COMPLETED_SUCCESS:
+                        statusText = "Successful";
+                        //htmlText += '<input type="button" value="DELETE" style="width:60px" onClick="handleJobDeleteButton(this)">';
+                        htmlText += "";
+                        break;
+                    case jobStatusEnum.COMPLETED_FAIL:
+                        statusText = "Failed";
+                        //htmlText + '<input type="button" value="DELETE" style="width:60px" onClick="handleJobDeleteButton(this)">';
+                        if (adminLevel > 0) {
+                            htmlText += '<input type="button" value="RE-RUN" style="width:60px; padding: 0px 0px 0px 0px;" onClick="handleJobReRunButton(this)">';
+                        }
+                        styleText = "color:red;";
+                        break;
+                    case jobStatusEnum.CANCELLED:
+                        statusText = "Cancelled";
+                        //htmlText += '<input type="button" value="DELETE" style="width:60px" onClick="handleJobDeleteButton(this)">';
+                        if (adminLevel > 0) {
+                            htmlText += '<input type="button" value="RE-RUN" style="width:60px; padding: 0px 0px 0px 0px;" onClick="handleJobReRunButton(this)">';
+                        }
+                        styleText = "color:red;";
+                        break;
+                    case jobStatusEnum.KILLED:
+                        statusText = "Killed";
+                        //htmlText += '<input type="button" value="DELETE" style="width:60x" onClick="handleJobDeleteButton(this)">';
+                        if (adminLevel > 0) {
+                            htmlText += '<input type="button" value="RE-RUN" style="width:60x; padding: 0px 0px 0px 0px;" onClick="handleJobReRunButton(this)">';
+                        }
+                        styleText = "color:red;";
+                        break;
+                }
+                var buttonCell = row.insertCell(0);
+                buttonCell.innerHTML = htmlText;
+                buttonCell.style = "min-width:120px";
+                row.insertCell(1).innerHTML = jobInfo.id;
+                var statusCell = row.insertCell(2);
+                statusCell.innerHTML = statusText;
+                statusCell.style = styleText;
+                AddProgressBar(row.insertCell(3), parseFloat(jobInfo.progress), "   " + jobInfo.progressText, 180);   // Progress pct and text
+                row.insertCell(4).innerHTML = jobInfo.workerIp;
+                row.insertCell(5).innerHTML = jobInfo.gpuIndex;
+                var priorityCell = row.insertCell(6);
+                if (jobInfo.status === jobStatusEnum.WAITING) {
+                    priorityCell.innerHTML = jobInfo.priority + ' <input type="button" value="\u25BC" style="height: 15px; width: 15px; padding: 0px 0px 0px 0px; vertical-align: middle; text-align: left" onClick="handlePriorityChangeButton(this,-1)">';
+                    priorityCell.innerHTML += ' <input type="button" value="\u25B2" style="height: 15px; width: 15px; padding: 0px 0px 0px 0px; vertical-align: middle; text-align: left" onClick="handlePriorityChangeButton(this,1)">';
+                } else {
+                    priorityCell.innerHTML = jobInfo.priority;
+                }
+                priorityCell.style = "min-width: 50px";
+                row.insertCell(7).innerHTML = jobInfo.batchId;
+                row.insertCell(8).innerHTML = jobInfo.HPName;
+                row.insertCell(9).innerHTML = jobInfo.parameters;
+                var resultCell = row.insertCell(10);
+                resultCell.innerHTML = done ? InterpretErrorCode(jobInfo.errorCode) : "";
+                resultCell.style = styleText;
+                row.insertCell(11).innerHTML = ' <button style="height: 20px; padding: 0px 0px 0px 0px; margin-right: 4px; vertical-align: middle; text-align: center" onClick="handleRenameButton(this)">Rename</button>'
+                    + '<span contenteditable="false">' + (jobInfo.videoFilename === "DEFAULT" ? "" : jobInfo.videoFilename) + '</span>';
+                row.insertCell(12).innerHTML = jobInfo.completionTime;
+                var durCell = row.insertCell(13);
+                var durVal = parseFloat(jobInfo.duration).toFixed(1);
+                durCell.innerHTML = durVal < 0 ? "" : durVal + "s"; // Job duration in seconds
+                durCell.style = "text-align:right";
+
+                var vidDurCell = row.insertCell(14);
+                var vidDurVal = parseFloat(jobInfo.videoDuration).toFixed(1);
+                vidDurCell.innerHTML = vidDurVal < 0 ? "" : vidDurVal + "s";    // Video duration in seconds
+                vidDurCell.style = "text-align:right";
+
+                var playCell = row.insertCell(15);
+                playCell.innerHTML = '<b><input type="button" value="Play" onclick="ButtonHandler_Play(this);" style="height: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center">&nbsp;&nbsp;' +
+                    '<input type="button" value="Download" onclick="ButtonHandler_Download(this);" style="height: 18px; padding: 0px 1px 1px 1px; vertical-align: middle; text-align: center"></b>';
+                var disabled = (jobInfo.status !== jobStatusEnum.COMPLETED_SUCCESS);
+                button = playCell.getElementsByTagName('input')[0];
+                button.disabled = disabled;
+                button = playCell.getElementsByTagName('input')[1];
+                button.disabled = disabled;
+                playCell.style = "min-width:104px";
+            }
+        }
+
+        var emptyRowsToAdd = (totalFilteredItems === 0 ? itemsPerPage : itemsPerPage - mainSectionJobsShown);
+        while (emptyRowsToAdd-- > 0) {
+            var row = table.insertRow(table.rows.length);
+            for (var i = 0; i < 16; i++) {
+                row.insertCell(i);
+            }
+            row.cells[0].style = "height: 21px";
+        }
+    });
+
+    socket.on('update batches', function (data) {
+        curPageBatch = data['curPageKey'];
+        var itemsPerPage = data['itemsPerPageKey'];
+        var totalItems = data['totalBatchesKey'];
+        var totalFilteredItems = data['totalFilteredItemsKey'];
+        var batchStatusFilter = data['batchStatusFilterKey'];
+        var sortFieldKey = data['sortFieldKey'];
+        var sortAscending = data['ascendingKey'];
+        var numPages = Math.floor((totalFilteredItems - 1) / itemsPerPage) + 1;
+        batchTableSendCount = data['sendCountKey'];
+        document.getElementById("TextID_BatchTableSendCountId").innerHTML = batchTableSendCount;
+
+        var h = document.getElementById("pageHeaderID_Batch");
+        if (totalFilteredItems > 0) {
+            var firstItem = (curPageBatch * itemsPerPage) + 1;
+            var lastItem = firstItem + itemsPerPage - 1;
+            if (lastItem > totalFilteredItems)
+                lastItem = totalFilteredItems;
+            h.innerHTML = "Page " + (curPageBatch + 1) + " of " + numPages + ":  Showing items " + firstItem + "-" + lastItem + " of " + totalFilteredItems
+                + " items";
+        } else {
+            h.innerHTML = "(No items shown)";
+        }
+        if (batchStatusFilter !== -1) {
+            h.innerHTML += "; Filtered from " + totalItems + " items";
+        }
+        h.innerHTML += "; Sorted by '" + sortFieldKey + "' in " + (sortAscending ? "ascending" : "descending") + " order";
+
+        var isOnLastPage = (curPageBatch === (numPages - 1));
+        document.getElementById("ButtonID_BatchPageFirst").disabled = curPageBatch === 0;
+        document.getElementById("ButtonID_BatchPageBack10").disabled = curPageBatch === 0;
+        document.getElementById("ButtonID_BatchPagePrev").disabled = curPageBatch === 0;
+        document.getElementById("ButtonID_BatchPageNext").disabled = isOnLastPage;
+        document.getElementById("ButtonID_BatchPageForward10").disabled = isOnLastPage;
+        document.getElementById("ButtonID_BatchPageLast").disabled = isOnLastPage;
+
+        for (var i = 0, p = curPageBatch - 2; i < 7; i++, p++) {
+            var buttonIDstring = "ButtonID_BatchJumpPage" + i;
+            var e = document.getElementById(buttonIDstring);
+            if (p < 1 || p > numPages) {
+                e.style.visibility = 'hidden';
+            } else {
+                e.innerHTML = p;
+                e.style.visibility = 'visible';
+            }
+        }
+
+        var button = document.getElementById("ButtonID_BatchFilterAll");
+        if (batchStatusFilter === -1) {
+            button.disabled = true;
+            button.style.backgroundColor = "lightgreen";
+        } else {
+            button.disabled = false;
+            button.style.backgroundColor = "lightgrey";
+        }
+
+        for (var i = 0; i < 3; i++) {
+            button = document.getElementById("ButtonID_BatchFilter" + i);
+            if (batchStatusFilter !== -1 && batchStatusFilter & (1 << i)) {
+                button.style.backgroundColor = "lightgreen";
+            } else {
+                button.style.backgroundColor = "lightgrey";
+            }
+        }
+
+        var table = document.getElementById("batchesTable");
+
+// start of common code:
+        while (table.rows.length > 1) { // Delete all rows except the header row
+            table.deleteRow(1);
+        }
+
+        // Display up/down 'sorted by' widget in the header row
+        var headerRow = table.rows[0];
+        for (var c = 1, numCells = headerRow.cells.length; c < numCells; c++) {
+            var cell = headerRow.cells[c];
+            button = cell.getElementsByTagName('input')[0];
+            if (button.id === sortFieldKey) {
+                button.value = sortAscending ? "\u25BC" : "\u25B2";
+            } else {
+                button.value = "";
+            }
+        }
+// end of common code
+
+        var statuses = data['dataKey'];
+
+        for (var i = 0, len = statuses.length; i < len; i++) {
+            var batchInfo = statuses[i];
+            var row = table.insertRow(table.rows.length);
+            var statusText = "";
+            var styleText = "color:black";
+            var done = true;
+            //var buttonCell = row.insertCell(0);
+            switch (batchInfo.status) {
+                case batchStatusEnum.WAITING:
+                    statusText = "Waiting";
+                    //buttonCell.innerHTML = "";  //'<input type="button" value="CANCEL" onClick="handleBatchCancelButton(this)">';   // Not sure if we want to allow this
+                    done = false;
+                    break;
+                case batchStatusEnum.ACTIVE:
+                    statusText = "ACTIVE";
+                    //buttonCell.innerHTML = "";  //'<input type="button" value="KILL" onClick="handleBatchKillButton(this)">';   // Not sure if we want to allow killing a batch!  Implies logic that goes and kills all of the unfinished jobs, and then what about jobs that were already completed?
+                    styleText = "color:green";
+                    done = false;
+                    break;
+                case batchStatusEnum.COMPLETED_SUCCESS:
+                    statusText = "Successful";
+                    //buttonCell.innerHTML = "";  //'<input type="button" value="DELETE" onClick="handleBatchDeleteButton(this)">';   // Not sure if we want to allow deletion!
+                    break;
+                case batchStatusEnum.COMPLETED_FAIL:
+                    statusText = "Failed";
+                    //buttonCell.innerHTML = "";  //'<input type="button" value="DELETE" onClick="handleBatchDeleteButton(this)">';   // Not sure if we want to allow deletion!
+                    styleText = "color:red";
+                    break;
+            }
+            row.insertCell(0).innerHTML = batchInfo.id;
+            var statusCell = row.insertCell(1);
+            statusCell.innerHTML = statusText;
+            statusCell.style = styleText;
+            row.insertCell(2).innerHTML = batchInfo.numJobsComplete + " of " + batchInfo.numJobsTotal;
+            AddProgressBar(row.insertCell(3), parseFloat(batchInfo.progress), "   " + batchInfo.progressText, 205);
+            //row.insertCell(4).innerHTML = batchInfo.priority;
+            row.insertCell(4).innerHTML = batchInfo.manifestName;
+            row.insertCell(5).innerHTML = batchInfo.parameters;
+            var resultCell = row.insertCell(6);
+            resultCell.innerHTML = done ? InterpretErrorCode(batchInfo.errorCode) : "";
+            resultCell.style = styleText;
+            row.insertCell(7).innerHTML = batchInfo.completionTime;
+            var durCell = row.insertCell(8);
+            var durVal = parseFloat(batchInfo.duration).toFixed(1);
+            durCell.innerHTML = durVal < 0 ? "" : durVal + "s"; // Duration in seconds
+            durCell.style = "text-align:right";
+        }
+
+        var emptyRowsToAdd = (totalFilteredItems === 0 ? itemsPerPage : itemsPerPage - statuses.length);
+        while (emptyRowsToAdd-- > 0) {
+            var row = table.insertRow(table.rows.length);
+            for (var i = 0; i < 9; i++) {
+                row.insertCell(i);
+            }
+            row.cells[0].style = "height: 16px";
+        }
+    });
+
+    socket.on('log event', function (data) {
+        var levelIn = data['levelKey'];
+        var msgIn = data['msgKey'];
+        var logEntry = { level: levelIn, msg: msgIn };
+        logEntries.push(logEntry);
+        UpdateLogDisplay();
+    });
+
+    socket.on('clear log', function(data) {
+        logEntries = [];
+        UpdateLogDisplay();
+    });
+
+    function ButtonHandler_SetLogFilterLevel(newLevel) {
+        logFilterLevel = newLevel;
+        UpdateLogDisplay();
+    }
+
+    var slashTokenString = "_^_";
+
+    function EncodeSlashes(str) {
+        //console.log("BEFORE: " + str);
+        while (str.indexOf("\\") >= 0) {
+            str = str.replace("\\", slashTokenString);
+        }
+        while (str.indexOf("/") >= 0) {
+            str = str.replace("/", slashTokenString);
+        }
+        //console.log("AFTER: " + str);
+        return str;
+    }
+
+    var requestingCopyPackageParameters = false;    // Turnaround time on the request is fast enough we don't worry about overlapping requests
+
+    function ButtonHandler_GetPackageParameters() {
+        requestingCopyPackageParameters = false;
+        var hpName = document.getElementById("InputID_HPName").value;
+
+        socket.emit('get hp parameters', { hpName: hpName });
+    }
+
+    function ButtonHandler_CopyPackageParameters() {
+        requestingCopyPackageParameters = true;
+        var hpName = document.getElementById("InputID_HPName").value;
+
+        socket.emit('get hp parameters', { hpName: hpName });
+    }
+
+    socket.on('hp parameters', function (data) {
+        var hpName = data['hpName'];
+        var parameters = data['parameters'];
+
+        if (requestingCopyPackageParameters) {
+            if(parameters.error.length > 0) {
+                document.getElementById("DisplayID_HPParams").innerHTML = 'Error filling parameter field: ' + parameters.error;
+                return;
+            }
+            var text = "";
+            for (var i = 0; i < parameters.nodes.length; i++) {
+                var param = parameters.nodes[i];
+                text += param.substring(0, param.lastIndexOf('[') - 1);
+                if (i < parameters.nodes.length - 1) {
+                    text += " ";
+                }
+            }
+            document.getElementById("InputID_Parameters").value = text;
+
+        } else {
+            var output = document.getElementById("DisplayID_HPParams");
+            var text = 'Package-specific parameters for "' + hpName + '":<br /><br />';
+            if(parameters.error.length > 0) {
+                text += 'Error: ' + parameters.error;
+            } else {
+                text += 'Nodes:';
+                if (parameters.nodes.length === 0) {
+                    text += "<pre>    (None)</pre>";
+                } else {
+                    for (var i = 0; i < parameters.nodes.length; i++) {
+                        var param = parameters.nodes[i];
+                        param = param.substring(0, param.lastIndexOf('['));
+                        text += "<pre onclick=\"document.getElementById('InputID_Parameters').value += '" + param + "' \">    " + parameters.nodes[i] + "</pre>";
+                    }
+                }
+                text += 'Choreography:';
+                if (parameters.choreo.length === 0) {
+                    text += "<pre>    (None)</pre>";
+                } else {
+                    for (var i = 0; i < parameters.choreo.length; i++) {
+                        var param = parameters.choreo[i];
+                        param = param.substring(0, param.lastIndexOf('[') - 1);
+                        text += "<pre onclick=\"document.getElementById('InputID_Parameters').value += '" + param + "= ' \">    " + parameters.choreo[i] + "</pre>";
+                    }
+                }
+            }
+
+            
+            output.innerHTML = text;
+        }
+    });
+
+    function ButtonHandler_ListPackages() {
+        socket.emit('get hp list', {});
+    }
+
+    socket.on('hp list', function (data) {
+        var list = data['list'];
+        console.log('hp list');
+
+        var text = "";
+        for (var i = 0; i < list.length; i++) {
+            text += '<span><a onclick="document.getElementById(\'InputID_HPName\').value = \'' + list[i] + '\';">' + list[i] + '</a>';
+            if(list[i].startsWith('Specials/')) {
+                text += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a onclick="socket.emit(\'delete special\', { name: \'' + list[i] + '\' }); this.parentNode.remove();" style="color: red; font-weight: bold;">DELETE</a>';
+            }
+            text += '<br></span>';
+        }
+        var scrollBox = document.getElementById("ID_HPListArea");
+        scrollBox.innerHTML = text;
+        //scrollBox.scrollTop = scrollBox.scrollHeight;
+    });
+
+    function ButtonHandler_StartVideoGen() {
+        var hpName = document.getElementById("InputID_HPName").value;
+        var videoFilenameFormatString = document.getElementById("InputID_VideoFilenameFormatString").value;
+        videoFilenameFormatString = videoFilenameFormatString.replace(/\s+/g, '');  // Remove all spaces
+        if (videoFilenameFormatString === "") {
+            videoFilenameFormatString = "DEFAULT";
+        }
+        var priority = document.getElementById("InputID_PrioritySingle").value;
+        var parameters = document.getElementById("InputID_Parameters").value;
+        var autoTrack = document.getElementById("ID_AutoTrackOn").checked;
+
+        var useRoundAsRoundLabel = document.getElementById("ID_UseRoundAsRoundLabel").checked;
+        if (useRoundAsRoundLabel) {
+            parameters += " -useRoundAsRoundLabel";
+        }
+
+        var topLabel = document.getElementById("InputID_TopLabel").value.trim();
+        if (topLabel !== "") {
+            parameters += ' -topLabel="' + topLabel + '"';
+        }
+
+        var bottomLabel = document.getElementById("InputID_BottomLabel").value.trim();
+        if (bottomLabel !== "") {
+            parameters += ' -bottomLabel="' + bottomLabel + '"';
+        }
+
+        var bottomRightLabel = document.getElementById("InputID_BottomRightLabel").value.trim();
+        if (bottomRightLabel !== "") {
+            parameters += ' -bottomRightLabel="' + bottomRightLabel + '"';
+        }
+
+        hpName = EncodeSlashes(hpName);
+        parameters = parameters.trim();
+        if (parameters === "")
+            parameters = "%20"; // Just doing this so the request succeeds
+        //parameters = encodeURIComponent(parameters);    // This is not the real issue with commas in params...
+        if(parameters.includes("“") || parameters.includes("”")) {
+            parameters = parameters.replace(/[“”]/g, "\"");
+        }
+
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function () {
+            if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
+                if (autoTrack === true) {
+                    var data = xmlHttp.responseText.split(",");
+                    var succeeded = data[0] === 'true';
+                    if (succeeded) {
+                        var jobId = data[1];
+                        socket.emit('toggle job track', { jobId: jobId, on: true });
+                    }
+                }
+            }
+        }
+        var batchId = -1;
+        var autoRoundNum = -1;
+        xmlHttp.open("GET", '/StartVideoGen/' + hpName + '/' + priority + '/' + batchId + '/' + autoRoundNum + '/' + videoFilenameFormatString + '/' + parameters, true);
+        xmlHttp.send(null);
+    }
+
+    function ButtonHandler_StartBatchVideoGen() {
+        var manifestName = document.getElementById("InputID_ManifestName").value;
+        //var priority = document.getElementById("InputID_PriorityBatch").value;
+        var parameters = document.getElementById("InputID_ManifestParameters").value;
+
+        manifestName = EncodeSlashes(manifestName);
+        parameters = parameters.trim();
+        if (parameters === "")
+            parameters = "%20"; // Just doing this so the request succeeds
+
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", "/StartBatchGen/" + manifestName + "/-1/-1/" + parameters, true);
+        xmlHttp.send(null);
+    }
+
+    function ButtonHandler_ChangeMaxJobs(button, cellIndex, delta, msgText) {
+        var row = button.parentNode.parentNode;
+        var element = row.cells[cellIndex].getElementsByTagName('b')[0].innerHTML;
+        var oldMax = parseInt(element);
+        var newMax = oldMax + delta;
+        if (newMax < 0)
+            newMax = 0;
+        else if (newMax > 80)
+            newMax = 80;
+        if (newMax !== oldMax) {
+            var workerIndex = row.cells[1].innerHTML;
+            socket.emit('set max ' + msgText + ' jobs', { workerIpKey: workerIndex, newMaxKey: newMax });
+        }
+    }
+
+    function ButtonHandler_GetLatestBuild(button) {
+        var row = button.parentNode.parentNode;
+        var workerIndex = row.cells[0].innerHTML;
+        socket.emit('get latest build', { workerIpKey: workerIndex });
+    }
+
+    function ButtonHandler_GetLatestPackages(button) {
+        var row = button.parentNode.parentNode;
+        var workerIndex = row.cells[0].innerHTML;
+        socket.emit('get latest packages', { workerIpKey: workerIndex });
+    }
+
+    function ButtonHandler_SoftPause(button) {
+        var row = button.parentNode.parentNode;
+        var workerIndex = row.cells[0].innerHTML;
+        socket.emit('soft pause', { workerIpKey: workerIndex });
+    }
+
+    function ButtonHandler_HardPause(button) {
+        var row = button.parentNode.parentNode;
+        var workerIndex = row.cells[0].innerHTML;
+        socket.emit('hard pause', { workerIpKey: workerIndex });
+    }
+
+    function ButtonHandler_UnPause(button) {
+        var row = button.parentNode.parentNode;
+        var workerIndex = row.cells[0].innerHTML;
+        socket.emit('un pause', { workerIpKey: workerIndex });
+    }
+
+    function ButtonHandler_GetLatestBuildVersions(button) {
+        socket.emit('get latest build versions', {});
+    }
+
+    function ButtonHandler_KillAllActiveOnWorker(button) {
+        var row = button.parentNode.parentNode;
+        var workerIndex = row.cells[0].innerHTML;
+        socket.emit('kill all jobs on worker', { workerIpKey: workerIndex });
+    }
+
+    function ButtonHandler_RestartWorkerRequest(button) {
+        var row = button.parentNode.parentNode;
+        var workerIndex = row.cells[0].innerHTML;
+        workerConfirmRestartActive[workerIndex] = true;
+        var cell = button.parentNode;
+        cell.innerHTML = '<b></b>&nbsp;ARE YOU SURE?  <input type="button" value="CANCEL" onclick="ButtonHandler_RestartWorkerCancelled(this)">&nbsp;&nbsp;<input type="button" style="color:blue" value="RESTART SERVER!" onclick="ButtonHandler_RestartWorkerConfirmed(this)">';
+    }
+
+    function ButtonHandler_RestartWorkerCancelled(button) {
+        var row = button.parentNode.parentNode;
+        var workerIndex = row.cells[0].innerHTML;
+        workerConfirmRestartActive[workerIndex] = false;
+        ResetButtonForWorkerRestart(row.cells[columnRestart]);
+        SetButtonStateForWorkerRestart(row.cells[columnRestart], false, false);
+    }
+
+    function ButtonHandler_RestartWorkerConfirmed(button) {
+        var row = button.parentNode.parentNode;
+        var workerIndex = row.cells[0].innerHTML;
+        workerConfirmRestartActive[workerIndex] = false;
+        ResetButtonForWorkerRestart(row.cells[columnRestart]);
+        SetButtonStateForWorkerRestart(row.cells[columnRestart], true, true);
+        ResetButtonForWorkerShutdown(row.cells[columnShutdown]);
+        SetButtonStateForWorkerShutdown(row.cells[columnShutdown], false, true);
+        socket.emit('restart worker', { workerIpKey: workerIndex });
+    }
+
+    function ButtonHandler_ShutdownWorkerRequest(button) {
+        var row = button.parentNode.parentNode;
+        var workerIndex = row.cells[0].innerHTML;
+        workerConfirmShutdownActive[workerIndex] = true;
+        var cell = button.parentNode;
+        cell.innerHTML = '<b></b>&nbsp;ARE YOU SURE?  <input type="button" value="CANCEL" onclick="ButtonHandler_ShutdownWorkerCancelled(this)">&nbsp;&nbsp;<input type="button" style="color:red" value="SHUT DOWN SERVER!" onclick="ButtonHandler_ShutdownWorkerConfirmed(this)">';
+    }
+
+    function ButtonHandler_ShutdownWorkerCancelled(button) {
+        var row = button.parentNode.parentNode;
+        var workerIndex = row.cells[0].innerHTML;
+        workerConfirmShutdownActive[workerIndex] = false;
+        ResetButtonForWorkerShutdown(row.cells[columnShutdown]);
+        SetButtonStateForWorkerShutdown(row.cells[columnShutdown], false, false);
+    }
+
+    function ButtonHandler_ShutdownWorkerConfirmed(button) {
+        var row = button.parentNode.parentNode;
+        var workerIndex = row.cells[0].innerHTML;
+        workerConfirmShutdownActive[workerIndex] = false;
+        ResetButtonForWorkerRestart(row.cells[columnRestart]);
+        SetButtonStateForWorkerRestart(row.cells[columnRestart], false, true);
+        ResetButtonForWorkerShutdown(row.cells[columnShutdown]);
+        SetButtonStateForWorkerShutdown(row.cells[columnShutdown], true, true);
+        socket.emit('shutdown worker', { workerIpKey: workerIndex });
+    }
+
+    function ButtonHandler_Save() {
+        socket.emit('save event session');
+    }
+
+    function MenuItemHandlerQuit() {
+        socket.emit('quit master server');
+    }
+
+    function MenuItemHandlerEndEventSession() {
+        socket.emit('end event session');
+    }
+
+    function ButtonHandler_CancelWaitingJobs() {
+        socket.emit('cancel all waiting jobs');
+    }
+
+    function ButtonHandler_DeleteCompletedJobs() {
+        socket.emit('delete all completed jobs');
+    }
+
+    // Note that 'serverVarToSet' must match the variable name in the server
+    function ButtonHandler_SetGlobalSetting(elementId, serverVarToSet) {
+        var element = document.getElementById(elementId);
+        console.log("serverVarToSet is " + serverVarToSet);
+        socket.emit('set global setting', { gsVarKey: serverVarToSet, gsValueKey: element.value });
+        element.value = "";
+    }
+
+    function MenuItemHandler(selection, serverVarToSet) {
+        console.log("menu item clicked with " + selection);
+        socket.emit('set global setting', { gsVarKey: serverVarToSet, gsValueKey: selection });
+    }
+
+    function ButtonHandler_ResetToCurrentESID() {
+        socket.emit('reset to current esid');
+    }
+
+    function ButtonHandler_SetNewESID() {
+        var esid = document.getElementById("InputID_NewESID").value;
+        socket.emit('set new esid', { esid: esid });
+    }
+
+    function ButtonHandler_PageFirst() {
+        socket.emit('first page');
+    }
+
+    function ButtonHandler_PageLast() {
+        socket.emit('last page');
+    }
+
+    function ButtonHandler_PageNext() {
+        socket.emit('next page');
+    }
+
+    function ButtonHandler_PagePrev() {
+        socket.emit('prev page');
+    }
+
+    function ButtonHandler_JumpPageRelative(pageDelta) {
+        var page = curPage + pageDelta;
+        socket.emit('jump to page', { pageKey: page });
+    }
+
+    function ButtonHandler_FilterAll() {
+        socket.emit('reset filter');
+    }
+
+    function ButtonHandler_Filter(whichFilter) {
+        socket.emit('toggle filter', { whichFilterKey: whichFilter });
+    }
+
+    function ButtonHandler_Sort(sortField) {
+        socket.emit('sort column', { sortFieldKey: sortField });
+    }
+
+    function ButtonHandler_SetItemsPerPage() {
+        var value = parseInt(document.getElementById('InputID_ItemsPerPage').value);
+        if (value > 0 && value < 101)
+            socket.emit('set items per page', { newItemsPerPage: value });
+    }
+
+    function ButtonHandler_BatchPageFirst() {
+        socket.emit('first page batch');
+    }
+
+    function ButtonHandler_BatchPageLast() {
+        socket.emit('last page batch');
+    }
+
+    function ButtonHandler_BatchPageNext() {
+        socket.emit('next page batch');
+    }
+
+    function ButtonHandler_BatchPagePrev() {
+        socket.emit('prev page batch');
+    }
+
+    function ButtonHandler_BatchJumpPageRelative(pageDelta) {
+        var page = curPageBatch + pageDelta;
+        socket.emit('jump to page batch', { pageKey: page });
+    }
+
+    function ButtonHandler_BatchFilterAll() {
+        socket.emit('reset filter batch');
+    }
+
+    function ButtonHandler_BatchFilter(whichFilter) {
+        socket.emit('toggle filter batch', { whichFilterKey: whichFilter });
+    }
+
+    function ButtonHandler_BatchSort(sortField) {
+        socket.emit('sort column batch', { sortFieldKey: sortField });
+    }
+
+    function ButtonHandler_BatchSetItemsPerPage() {
+        var value = parseInt(document.getElementById('InputID_BatchItemsPerPage').value);
+        if (value > 0 && value < 101)
+            socket.emit('set items per page batch', { newItemsPerPage: value });
+    }
+
+    function InterpretErrorCode(errorCode) {
+        switch (errorCode) {
+            case  -2: return "Cancelled";
+            case  -1: return "Killed";
+            case   0: return "OK";
+            case   1: return "Cannot change directory to CGC_LOCAL_BUILD_ROOT";
+            case   2: return "Error returned from Haxxis";
+            case   3: return "Exceptions during Haxxis run";
+            case   4: return "HP not found";
+            case   5: return "HP has no choreography";
+            case   6: return "Choreography did not record any video";
+            case   7: return "HP evaluation had errors";
+            case   8: return "HP has chain errors";
+            case   9: return "Manifest not found";
+            case  10: return "Specified manifest is not a text file";
+            case  11: return "Trace exceeds instruction limit";
+            case  12: return "Trace API request timed out";
+            case  13: return "Trace API request had error";
+            case  99: return "Invalid parameter count given to bash script";
+            case 127: return "OK";    // This is returned when Haxxis intentionally kills self after video gen (2016/03/01)
+            case 139: return "Crash in Haxxis";
+            case 143: return "Job timed out";
+            default: return "Error code: " + errorCode;
+        }
+    }
+
+    function handleVideoCopyButton(button) {
+        var row = button.parentNode.parentNode;
+        var jobId = row.cells[1].innerHTML;
+
+        //var link = document.createElement("a");
+        //link.download = "Video_20151124_141147_998845400.avi";
+        //link.href = "http:\\\\\\voidalpha-nas\\Projects\\NAS_CGC\\HaxxisVideos\\Video_20151124_141147_998845400.avi";
+        //link.click();
+    }
+
+    function handleJobCancelButton(button) {
+        var row = button.parentNode.parentNode.parentNode;
+        var jobId = row.cells[1].innerHTML;
+        socket.emit('cancel waiting job', { jobIdToCancel: jobId });
+    }
+
+    function handleJobKillButton(button) {
+        var row = button.parentNode.parentNode.parentNode;
+        var jobId = row.cells[1].innerHTML;
+        socket.emit('kill active job', { jobIdToKill: jobId });
+    }
+
+    function handleJobDeleteButton(button) {
+        var row = button.parentNode.parentNode.parentNode;
+        var jobId = row.cells[1].innerHTML;
+        socket.emit('delete job', { jobIdToDelete: jobId });
+    }
+
+    function handleJobReRunButton(button) {
+        var row = button.parentNode.parentNode.parentNode;
+        var jobId = row.cells[1].innerHTML;
+        socket.emit('rerun job', { jobIdToReRun: jobId });
+    }
+
+    function ButtonHandler_ToggleTrack(button, on) {
+        var row = button.parentNode.parentNode.parentNode;
+        var jobId = row.cells[1].innerHTML;
+        socket.emit('toggle job track', { jobId: jobId, on: on });
+    }
+
+    function handlePriorityChangeButton(button, delta) {
+        var row = button.parentNode.parentNode;
+        var jobId = row.cells[1].innerHTML;
+        if (event.shiftKey) {
+            // Absolute val of delta is: 1
+        } else if (event.ctrlKey) {
+            delta *= 100;    // Absolute val of delta is: 100
+        } else {
+            delta *= 10;    // Absolute val of delta is: 10
+        }
+        socket.emit('change job priority', { jobId: jobId, delta: delta });
+    }
+
+    function handleRenameButton(button) {
+        button.nextSibling.contentEditable = true;
+        button.nextSibling.oldValue = button.nextSibling.innerHTML;
+        button.nextSibling.focus();
+        button.nextSibling.onkeydown = function(event) {
+            if(event.key == "Enter") {
+                event.preventDefault();
+                event.stopPropagation();
+
+                this.previousSibling.remove();
+
+                var jobId = this.parentNode.parentNode.cells[1].innerHTML;
+                socket.emit('rename', { jobId: jobId, oldName: this.oldValue, newName: this.innerHTML })
+
+                delete this.oldValue;
+
+                this.previousSibling.innerHTML = "Rename";
+                this.previousSibling.onclick = function(event) {
+                    handleRenameButton(this);
+                };
+            }
+        }
+        button.nextSibling.onpaste = function(event) {
+            event.preventDefault();
+            var text = event.clipboardData.getData("text/plain");
+            var temp = document.createElement("div");
+            temp.innerHTML = text;
+            if(document.queryCommandSupported("insertText"))
+                document.execCommand("insertText", false, temp.textContent);
+            else
+                document.execCommand("paste", false, temp.textContent);
+        }
+
+        button.insertAdjacentHTML("afterend", '<button style="height: 20px; padding: 0px 0px 0px 0px; margin-right: 4px; vertical-align: middle; text-align: center">Cancel</button>');
+
+        button.nextSibling.onclick = function(event) {
+            this.nextSibling.innerHTML = this.nextSibling.oldValue;
+            this.nextSibling.contentEditable = false;
+            this.nextSibling.onpaste = null;
+            delete this.nextSibling.oldValue;
+
+            this.previousSibling.innerHTML = "Rename";
+            this.previousSibling.onclick = function(event) {
+                handleRenameButton(this);
+            };
+
+            this.remove();
+        };
+
+        button.innerHTML = "Done";
+        button.onclick = function(event) {
+            this.nextSibling.remove();
+
+            var jobId = this.parentNode.parentNode.cells[1].innerHTML;
+            socket.emit('rename', { jobId: jobId, oldName: this.nextSibling.oldValue, newName: this.nextSibling.innerHTML })
+
+            this.nextSibling.contentEditable = false;
+            this.nextSibling.onpaste = null;
+            delete this.nextSibling.oldValue;
+
+            this.innerHTML = "Rename";
+            this.onclick = function(event) {
+                handleRenameButton(this);
+            };
+        };
+    }
+
+    function ButtonHandler_Play(button) {
+        var row = button.parentNode.parentNode.parentNode;
+        var jobId = row.cells[1].innerHTML;
+
+        FetchVideo(jobId, "");
+        //var workerIp = row.cells[4].innerHTML;  // TEMPORARY fix to allow for extra-LAN connection
+        //var workerIp = document.origin.split(':')[1].slice(2);  // Get the document origin, divide on colons (http, //ipaddress, 8003), take element 1, and remove leading slashes.
+        //var videoFilename = row.cells[11].innerHTML;
+
+        //var httpUrl = "http://" + workerIp + ":" + workerVGSPort + "/GetVideo/" + eventSessionId + "/" + jobId + "/" + videoFilename;
+
+        // Note that you must not have pop-ups blocked in your browser
+        //window.open(httpUrl);
+    }
+
+    function ButtonHandler_Download(button) {
+        var row = button.parentNode.parentNode.parentNode;
+        var jobId = row.cells[1].innerHTML;
+        //var workerIp = row.cells[4].innerHTML;  // TEMPORARY fix to allow for extra-LAN connection
+        //var workerIp = document.origin.split(':')[1].slice(2);  // Get the document origin, divide on colons (http, //ipaddress, 8003), take element 1, and remove leading slashes.
+        var videoFilename = row.cells[11].querySelector("span").innerHTML;
+
+        FetchVideo(jobId, videoFilename);
+
+        //var ftpUrl = "ftp://" + workerIp + ":" + ftpPort + "/Public/GeneratedVideos/EventSession_" + eventSessionId + "/" + videoFilename;
+        //console.log('ftp url: ' + ftpUrl);
+
+        //window.open(ftpUrl);
+    }
+
+    function FetchVideo(id, download) {
+        window.open("/FetchVideo/" + id + (download == "" ? "/view" : "/download/" + download));
+    }
+
+    function periodicLoadMonitorUpdate() {
+        if (sectionWorkerTable) {
+            socket.emit('update worker load');
+        }
+    }
+
+    socket.on('worker load info', function (data) {
+        // NOTE:  The real response is the receiving of 'update workers'.
+        // This message receiver is really only to re-set the timer.
+        // Ultimately, we want this function to ONLY update the load monitoring info (not re-create the whole table),
+        // But for now we do the above.
+        if (sectionWorkerTable) {   // Don't ask for another update if the section is collapsed!
+            workerUpdateTimeout = setTimeout(periodicLoadMonitorUpdate, 1900);
+        }
+    });
+
+</script>
+
+</body>
+</html>

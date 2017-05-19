@@ -1,0 +1,26 @@
+# Video Gen Server Configuration
+#
+# This file is parsed for keywords in the form 'keyword:data', as in 'itemsPerPage:10'
+# Everything else is ignored, and we generally add comments with a line that starts with # character
+
+# worker:IP of worker, friendly name of worker, default max regular jobs, default max special jobs, Windows label of disk 1, Windows label of disk 2
+# Examples:
+# worker:192.168.1.128,My Server,10,2,C,D
+# worker:localhost,Local Host,3,1,C,D
+
+stresstest:0
+itemsPerPage:20
+supresschatnotifications:false
+
+# Global settings
+TraceAPIURL: http://50.88.24.34:8000
+ScreenResolution: 1920x1080
+FullScreen: Off
+# Note on videoCodecName:  the name is a match pattern in the form, e.g. x264*
+videoCodecName:x264
+ExtraParameters:
+RealTime:Off
+FrameRate:Thirty
+DownScale:Original
+CurrentRound:-1
+AutoRoundBatch:Off
